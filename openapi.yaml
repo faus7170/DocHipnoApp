@@ -1,0 +1,3023 @@
+openapi: 3.0.0
+info:
+  title: HipnoApp API
+  version: 1.0.0
+  description: |
+    API para autenticación y endpoints protegidos de HipnoApp
+    **Autenticación:** Todos los endpoints protegidos aceptan:
+    - Un JWT de sesión generado por el backend (con claim `role: user` o `admin`),
+    - O un Firebase ID Token (con claim `role: user` o `admin`).
+    El token se envía en el header `Authorization: Bearer <TOKEN>`.
+    El backend valida el token y el rol antes de permitir el acceso.
+
+    **Endpoints admin:** Los endpoints bajo `/v1/admin/*` aceptan:
+    - Un JWT de sesión con claim `role: admin`,
+    - O un Firebase ID Token con claim `role: admin`.
+    Ambos tipos de token permiten acceso si el rol es correcto.
+
+    **Flags dinámicos de usuario:**
+    Además de validar el rol en el token, el backend consulta flags dinámicos del usuario en Firestore (premium, trial, banned, etc.) y los expone en la request para lógica adicional en los handlers.
+servers:
+  - url: http://localhost:8080
+paths:
+  /v1/admin/config/audio-activation-interval:
+    post:
+      tags:
+        - Admin
+      summary: Actualiza la configuración global de activación de audios y sesiones activas
+    openapi: 3.0.0
+      description: |
+        Permite al admin modificar el intervalo de días para activar audios progresivamente (`intervalDays`) y el número máximo de sesiones activas permitidas para inscripción (`maxActiveSessions`).
+        Ambos valores se almacenan en Firestore bajo el documento `config/audioActivationInterval`.
+        Solo accesible para usuarios con rol admin (Bearer server JWT).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                intervalDays:
+                  type: integer
+                  example: 5
+                  description: Intervalo de días para activar audios progresivamente
+                maxActiveSessions:
+                  type: integer
+                  example: 3
+                  description: Número máximo de sesiones activas permitidas para inscripción
+            examples:
+              ejemplo:
+                value:
+                  intervalDays: 5
+                  maxActiveSessions: 3
+      responses:
+        '200':
+          description: Configuración actualizada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  intervalDays:
+                    type: integer
+                  maxActiveSessions:
+                    type: integer
+              examples:
+                ejemplo:
+                  value:
+                    message: Configuración actualizada
+                    intervalDays: 5
+                    maxActiveSessions: 3
+        '400':
+          description: Body inválido o campos faltantes
+        '401':
+          description: No autorizado (JWT inválido o sin rol admin)
+        '500':
+          description: Error interno o credenciales faltantes
+  /v1/admin/upload:
+    post:
+      tags:
+        - Admin
+      summary: Solicita una URL firmada para subir archivos a Cloudflare R2
+      description: |
+        Genera una URL firmada para subir un archivo (audio, imagen de portada, imagen asociada a audio, etc) a Cloudflare R2 usando el SDK S3 compatible.
+        Solo accesible para usuarios con rol admin (Bearer server JWT).
+        Para imágenes asociadas a audio, usa la ruta: sessions/{sessionId}/img/{audioId}.jpg
+        Es obligatorio enviar el Content-Type correcto (ejemplo: image/jpeg, audio/mpeg).
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  sessionId: 
+                    type: string
+                    example: rZ8id6DFPyYbEFDGPmuf
+                    description: Id de la session
+                  audioId: 
+                    type: string
+                    example: CqJDS3QHrpWnmR15T9sv
+                    description: Id del audio que esta dentro de la session
+                  type:
+                    type: string
+                    example: udio
+                    description: Tipo de documento que se cargará (image/audio)
+                  contentType:
+                    type: string
+                    example:  audio/mpeg 
+                    description: Contentenido que se adjunta a la sentencia (audio/mpeg o image/jpeg)
+            examples:
+              imagen_Audio:
+                value:
+                  sessionId: rZ8id6DFPyYbEFDGPmuf,
+                  audioId: CqJDS3QHrpWnmR15T9sv,
+                  type: image",
+                  contentType: image/jpeg
+              imagen_Cover:
+                value:
+                  sessionId: rZ8id6DFPyYbEFDGPmuf,
+                  type: image",
+                  contentType: image/jpeg
+              audio:
+                value:
+                  sessionId: rZ8id6DFPyYbEFDGPmuf,
+                  audioId: CqJDS3QHrpWnmR15T9sv,
+                  type: audio,
+                  contentType: audio/mpeg
+      responses:
+        '200':
+          description: URL firmada generada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uploadUrl:
+                    type: string
+                    description: URL firmada para subir el archivo
+                  objectKey:
+                    type: string
+                    description: Nombre del objeto en el bucket (ruta completa)
+              examples:
+                imagenAudio:
+                  value:
+                    uploadUrl: https://r2.cdn/sessions/session123/img/audio1.jpg?signature=...
+                    objectKey: sessions/session123/img/audio1.jpg
+                audio:
+                  value:
+                    uploadUrl: https://r2.cdn/sessions/session123/audio1.mp3?signature=...
+                    objectKey: sessions/session123/audio1.mp3
+        '400':
+          description: Body inválido o campos faltantes
+        '500':
+          description: Error interno o credenciales faltantes
+  /v1/auth/validate:
+    post:
+      tags:
+        - Auth
+      summary: Valida el token de Firebase y crea/actualiza el usuario
+      description: |
+        Este endpoint valida el token de Firebase y registra o actualiza el perfil del usuario en Firestore.
+        Los campos dinámicos como `premium`, `trial`, `trialEndsAt`, `banned` y otros se inicializan o actualizan automáticamente según la lógica del backend (por ejemplo, al activar un trial, registrar una suscripción, o aplicar un ban). El usuario no puede modificar estos flags directamente.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Token de Firebase
+      responses:
+        '200':
+          description: Usuario validado y creado/actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      UID:
+                        type: string
+                      Email:
+                        type: string
+                      DisplayName:
+                        type: string
+                      Gender:
+                        type: string
+                      BirthDate:
+                        type: string
+                        format: date
+                      Age:
+                        type: integer
+                      Language:
+                        type: string
+                      Country:
+                        type: string
+                      Plan:
+                        type: string
+                      PlanStatus:
+                        type: string
+                      PlanExpiration:
+                        type: string
+                        format: date
+                      Premium:
+                        type: boolean
+                        description: Indica si el usuario tiene plan premium
+                      Trial:
+                        type: boolean
+                        description: Indica si el usuario está en periodo de prueba
+                      TrialEndsAt:
+                        type: string
+                        format: date-time
+                        description: Fecha de fin del periodo de prueba
+                      Banned:
+                        type: boolean
+                        description: Indica si el usuario está baneado
+                      TrialDaysLeft:
+                        type: integer
+                      SubscriptionSource:
+                        type: string
+                      CreatedAt:
+                        type: string
+                        format: date-time
+                      UpdatedAt:
+                        type: string
+                        format: date-time
+        '400':
+          description: Token inválido o faltante
+        '500':
+          description: Error interno
+  /v1/auth/refresh:
+    post:
+      tags:
+          - Auth
+      summary: Refresca el JWT de sesión usando un refresh token válido. El JWT anterior queda invalidado automáticamente.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  description: Refresh token válido
+      responses:
+        '200':
+          description: Nuevo JWT generado. El anterior queda invalidado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+        '400':
+          description: Datos inválidos
+        '401':
+          description: Refresh token inválido o JWT anterior invalidado
+  /v1/auth/signout:
+    post:
+      tags:
+          - Auth
+      summary: Invalida el JWT de sesión y opcionalmente revoca el refresh token de Firebase
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Sesión invalidada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '401':
+          description: Falta el JWT de sesión o es inválido
+  /v1/users/{userId}:
+    get:
+      tags:
+          - Users
+      summary: Obtiene el perfil de usuario, estado de suscripción, flags dinámicos y rol
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: UID del usuario (identificador único generado por Firebase)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Perfil de usuario encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      uid:
+                        type: string
+                      email:
+                        type: string
+                      displayName:
+                        type: string
+                      role:
+                        type: string 
+                        description: "user o admin"
+                      plan:
+                        type: string
+                      premium:
+                        type: boolean
+                      trial:
+                        type: boolean
+                      trialEndsAt:
+                        type: string
+                        format: date-time
+                      planExpiresAt:
+                        type: string
+                        format: date-time
+                      banned:
+                        type: boolean
+                      trialDaysLeft:
+                        type: integer
+                        description: Días restantes de prueba
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+        '400':
+          description: Falta el userId
+        '404':
+          description: Usuario no encontrado
+    patch:
+      tags:
+            - Users
+      summary: Actualiza el perfil de usuario (displayName, language, country, birthDate, gender)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: UID del usuario (identificador único generado por Firebase)
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                displayName:
+                  type: string
+                language:
+                  type: string
+                country:
+                  type: string
+                birthDate:
+                  type: string
+                  format: date
+                  description: Fecha de nacimiento en formato YYYY-MM-DD
+                TrialDaysLeft:
+                  type: integer
+                  description: Días restantes de prueba
+                gender:
+                  type: string
+      responses:
+        '200':
+          description: Perfil de usuario actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      UID:
+                        type: string
+                      Email:
+                        type: string
+                      DisplayName:
+                        type: string
+                      Gender:
+                        type: string
+                      BirthDate:
+                        type: string
+                        format: date
+                      Age:
+                        type: integer
+                      Language:
+                        type: string
+                      Country:
+                        type: string
+                      Plan:
+                        type: string
+                      PlanStatus:
+                        type: string
+                      PlanExpiration:
+                        type: string
+                        format: date
+                      TrialDaysLeft:
+                        type: integer
+                      SubscriptionSource:
+                        type: string
+                      CreatedAt:
+                        type: string
+                        format: date-time
+                      UpdatedAt:
+                        type: string
+                        format: date-time
+        '400':
+          description: Falta el userId o datos inválidos
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error al actualizar el usuario
+  /v1/users/{userId}/device/register:
+    post:
+      tags:
+            - Users
+      summary: Registra o actualiza un dispositivo para push o analitica, multi-dispositivo usando el identificador único del sistema operativo
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: UID Usa el identificador único del dispositivo, que provee el sistema operativo (por ejemplo, Android ID, UUID, o el identificador de vendor en iOS)
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - deviceId
+                - platform
+                - osVersion
+                - fcmToken
+              properties:
+                deviceId:
+                  type: string
+                  description: Identificador único del dispositivo (Android ID, UUID, identifierForVendor, etc)
+                platform:
+                  type: string
+                  enum: [iOS, Android, Web]
+                osVersion:
+                  type: string
+                fcmToken:
+                  type: string
+                  description: Token FCM para notificaciones push
+                location:
+                  type: string
+                country:
+                  type: string
+      responses:
+        '200':
+          description: Dispositivo registrado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Falta el userId o datos inválidos
+        '500':
+          description: Error al registrar el dispositivo
+  /v1/users/{userId}/device/unregister:
+    post:
+      tags:
+            - Users
+      summary: Desregistrar un dispositivo del usuario
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: UID del usuario (identificador único generado por Firebase)
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceId:
+                  type: string
+      responses:
+        '200':
+          description: Dispositivo desregistrado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Falta el userId o datos inválidos
+        '500':
+          description: Error al desregistrar el dispositivo
+  /v1/admin/sessions:
+    post:
+      tags:
+        - Admin
+      summary: Crear nueva sesión de audio (admin)
+      description: |
+        Crea la metadata de una sesión. La sesión solo contiene la imagen general y los metadatos. Los audios se gestionan en una subcolección aparte.
+        Para agregar audios, usa el endpoint /v1/admin/sessions/{sessionId}/audios.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                category:
+                  type: string
+                duration:
+                  type: integer
+                isPro:
+                  type: boolean
+                tags:
+                  type: array
+                  items:
+                    type: string
+                level:
+                  type: string
+                releaseDate:
+                  type: string
+                  format: date
+                imageUrl:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Sesión creada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Campos obligatorios faltantes o datos inválidos
+        '500':
+          description: Error al crear la sesión
+  /v1/admin/sessions/{sessionId}:
+    patch:
+      tags:
+        - Admin
+      summary: Actualiza la metadata de una sesión de audio (solo admin)
+      description: Actualiza la metadata de una sesión de audio (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                category:
+                  type: string
+                duration:
+                  type: integer
+                isPro:
+                  type: boolean
+                tags:
+                  type: array
+                  items:
+                    type: string
+                level:
+                  type: string
+                releaseDate:
+                  type: string
+                  format: date
+                imageUrl:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Sesión actualizada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  message:
+                    type: string
+        '401':
+          description: JWT inválido o no autorizado
+        '403':
+          description: No tienes permisos de administrador
+    delete:
+      tags:
+        - Admin
+      summary: Elimina (soft-delete) la metadata de una sesión de audio (solo admin)
+      description: Elimina (soft-delete) la metadata de una sesión de audio (solo admin)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Sesión eliminada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  message:
+                    type: string
+        '401':
+          description: JWT inválido o no autorizado
+        '403':
+          description: No tienes permisos de administrador
+  /v1/admin/assign-role:
+    post:
+      tags:
+        - Admin
+      summary: Asigna un rol a un usuario (admin)
+      description: Permite asignar el rol 'admin' o 'user' a un usuario por su UID.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                uid:
+                  type: string
+                  description: UID del usuario
+                role:
+                  type: string
+                  enum: [admin, user]
+                  description: Rol a asignar
+      responses:
+        '200':
+          description: Rol asignado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  uid:
+                    type: string
+                  role:
+                    type: string
+        '400':
+          description: Faltan uid o role, o rol inválido
+        '500':
+          description: Error al asignar el rol
+  /v1/config/change:
+    post:
+      summary: Cambia configuración global (admin)
+      description: Permite al admin cambiar parámetros globales de configuración.
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                key:
+                  type: string
+                  description: Clave de configuración
+                value:
+                  type: string
+                  description: Nuevo valor
+      responses:
+        '200':
+          description: Configuración cambiada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Parámetros inválidos
+        '500':
+          description: Error al cambiar la configuración
+  /v1/metrics:
+    get:
+      summary: Obtiene métricas globales (admin)
+      description: Devuelve métricas de uso y estadísticas globales para el admin.
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Métricas obtenidas correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  usersCount:
+                    type: integer
+                  sessionsCount:
+                    type: integer
+                  activeUsers:
+                    type: integer
+                  premiumUsers:
+                    type: integer
+        '401':
+          description: No autorizado
+        '500':
+          description: Error al obtener métricas
+  /v1/debug/trace:
+    post:
+      summary: Traza de debug (admin)
+      description: Permite al admin obtener trazas de debug para análisis.
+      tags:
+        - Admin
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                traceId:
+                  type: string
+                  description: ID de la traza
+      responses:
+        '200':
+          description: Traza obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  trace:
+                    type: string
+                  message:
+                    type: string
+        '400':
+          description: Parámetros inválidos
+        '500':
+          description: Error al obtener la traza
+  /v1/sessions:
+      get:
+        summary: List sessions with filters (category, tags, level, releaseDate, isPro, freeToday)
+        description: |
+          Devuelve una lista de sesiones de audio. Permite filtrar por categoría, etiquetas, nivel, fecha de lanzamiento, si es pro y si es gratuita hoy.
+          Si se provee autenticación, la respuesta incluye la disponibilidad según el plan del usuario (premium, trial, free).
+        tags:
+          - Sessions (Content)
+        security:
+          - bearerAuth: []
+        parameters:
+          - name: category
+            in: query
+            required: false
+            schema:
+              type: string
+          - name: tags
+            in: query
+            required: false
+            schema:
+              type: string
+              description: Lista de etiquetas separadas por coma
+          - name: level
+            in: query
+            required: false
+            schema:
+              type: string
+          - name: releaseDate
+            in: query
+            required: false
+            schema:
+              type: string
+              format: date
+          - name: isPro
+            in: query
+            required: false
+            schema:
+              type: boolean
+          - name: freeToday
+            in: query
+            required: false
+            schema:
+              type: boolean
+          - name: page
+            in: query
+            required: false
+            schema:
+              type: integer
+              default: 1
+          - name: pageSize
+            in: query
+            required: false
+            schema:
+              type: integer
+              default: 20
+        responses:
+          '200':
+            description: Lista de sesiones obtenida correctamente
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    sessions:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          title:
+                            type: string
+                          category:
+                            type: string
+                          tags:
+                            type: array
+                            items:
+                              type: string
+                          level:
+                            type: string
+                          releaseDate:
+                            type: string
+                            format: date
+                          isPro:
+                            type: boolean
+                          freeToday:
+                            type: boolean
+                          audioUrl:
+                            type: string
+                          imageUrl:
+                            type: string
+                          description:
+                            type: string
+                          available:
+                            type: boolean
+                            description: Indica si el usuario puede acceder según su plan
+                    page:
+                      type: integer
+                    pageSize:
+                      type: integer
+                    total:
+                      type: integer
+          '400':
+            description: Parámetros inválidos
+          '401':
+            description: No autorizado
+          '500':
+            description: Error interno
+  /v1/sessions/{sessionId}:
+    get:
+      summary: Obtiene la metadata de una sesión específica
+      description: |
+        Devuelve los datos de una sesión de audio por su ID. Incluye título, descripción, duración, audioUrl, imageUrl, si es Pro, etiquetas, nivel y fecha de lanzamiento.
+        Si el usuario está autenticado, la respuesta puede incluir información sobre disponibilidad según su plan.
+      tags:
+        - Sessions (Content)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Metadata de la sesión obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      title:
+                        type: string
+                      category:
+                        type: string
+                      description:
+                        type: string
+                      duration:
+                        type: integer
+                      audioUrl:
+                        type: string
+                      imageUrl:
+                        type: string
+                      isPro:
+                        type: boolean
+                      tags:
+                        type: array
+                        items:
+                          type: string
+                      level:
+                        type: string
+                      releaseDate:
+                        type: string
+                        format: date
+        '404':
+          description: Sesión no encontrada
+        '403':
+          description: Acceso denegado (si la sesión es Pro y el usuario no tiene acceso)
+        '500':
+          description: Error interno
+  /v1/sessions/{sessionId}/register:
+    post:
+      summary: Registra al usuario en una sesión
+      description: |
+        Registra al usuario en una sesión. El campo `progress` se inicializa automáticamente en `0.0` y `audiosCompletados` como arreglo vacío `[]`. El backend controla la actualización de progreso y audios completados.
+      tags:
+        - Sessions (Content)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Inscripción exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Inscripción exitosa
+                  sessionId:
+                    type: string
+                    example: session123
+                  title:
+                    type: string
+                    example: Relajación profunda
+                  progress:
+                    type: number
+                    format: float
+                    example: 0.0
+                  fechaInscripcion:
+                    type: string
+                    format: date-time
+                    example: 2025-08-26T23:33:52Z
+                  estado:
+                    type: string
+                    example: activa
+                  audiosCompletados:
+                    type: array
+                    items:
+                      type: string
+                    example: []
+        '400':
+          description: Máximo 3 sesiones activas permitidas
+        '500':
+          description: Error de conexión o registro
+  /v1/admin/sessions/{sessionId}/audios:
+    post:
+      tags:
+        - Admin
+      summary: Agrega un audio a la sesión indicada
+      description: |
+        Agrega un audio a la sesión indicada. Cada audio tiene su propio archivo, imagen, título, duración y orden.
+        Solo accesible para usuarios con rol admin (Bearer server JWT).
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Intro
+                audioUrl:
+                  type: string
+                  example: https://r2.cdn/sessions/session123/audio1.mp3
+                imageUrl:
+                  type: string
+                  example: https://r2.cdn/sessions/session123/audio1.jpg
+                duration:
+                  type: integer
+                  example: 300
+                order:
+                  type: integer
+                  example: 1
+                description:
+                  type: string
+                  example: Audio introductorio.
+      responses:
+        '200':
+          description: Audio agregado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audioId:
+                    type: string
+                    example: audio1
+                  message:
+                    type: string
+                    example: Audio agregado
+        '400':
+          description: Campos obligatorios faltantes o datos inválidos
+        '500':
+          description: Error al agregar audio
+  /v1/sessions/{sessionId}/audios:
+    get:
+      summary: Lista los audios de una sesión y determina cuáles están activos para el usuario
+      description: |
+        Devuelve los audios de la sesión ordenados por el campo `order` y determina cuáles están activos para el usuario según la fecha de inscripción y el intervalo configurado. La activación es progresiva: cada audio se desbloquea tras N * intervalo días y solo si el anterior está completado.
+        
+        **Lógica de activación progresiva:**
+        1. Se obtiene la fecha de inscripción del usuario a la sesión desde `users/{userId}/sessions/{sessionId}`.
+        2. El intervalo de activación de audios se consulta desde la configuración global (`config/audioActivationInterval` en Firestore, valor por defecto: 3 días).
+        3. Los audios de la sesión se listan ordenados por el campo `order`.
+        4. Para cada audio, se calcula si está activo:
+           - El audio en la posición N (`order=N`) se activa cuando han transcurrido al menos N * intervalo días desde la fecha de inscripción.
+           - Ejemplo: Si la inscripción fue el 1 de agosto y el intervalo es 3 días:
+             - Audio 1 (`order=1`): activo desde el 1 de agosto.
+             - Audio 2 (`order=2`): activo desde el 4 de agosto.
+             - Audio 3 (`order=3`): activo desde el 7 de agosto.
+        5. El campo `isActive` se determina para cada audio y se incluye en la respuesta.
+        6. El audio N+1 solo se activa si el audio N está marcado como completado en `audiosCompletados` del usuario.
+      tags:
+        - Sessions (Content)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de audios con estado de activación
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  audios:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        audioId:
+                          type: string
+                        isActive:
+                          type: boolean
+                        order:
+                          type: integer
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        duration:
+                          type: integer
+                        imageUrl:
+                          type: string
+                        audioUrl:
+                          type: string
+          # Ejemplo de respuesta:
+          # {
+          #   "audios": [
+          #     {
+          #       "audioId": "G53bywy6NQAKHopdtFPa",
+          #       "isActive": true,
+          #       "order": 1,
+          #       "title": "Amor 1",
+          #       "description": "Audio introductorio.",
+          #       "duration": 300,
+          #       "imageUrl": "https://r2.cdn/sessions/session123/audio1.jpg",
+          #       "audioUrl": "https://r2.cdn/sessions/session123/audio1.mp3"
+          #     },
+          #     {
+          #       "audioId": "G53bywy6NQAKHopdtFPb",
+          #       "isActive": false,
+          #       "order": 2,
+          #       "title": "Amor 2",
+          #       "description": "Audio avanzado.",
+          #       "duration": 320,
+          #       "imageUrl": "https://r2.cdn/sessions/session123/audio2.jpg",
+          #       "audioUrl": "https://r2.cdn/sessions/session123/audio2.mp3"
+          #     }
+          #   ]
+          # }
+        '404':
+          description: Sesión no encontrada
+        '403':
+          description: Acceso denegado (si la sesión es Pro y el usuario no tiene acceso)
+  /v1/sessions/{sessionId}/start:
+      post:
+        summary: Registra el inicio de sesión de usuario en una sesión
+        description: |
+          Registra el inicio de una sesión para el usuario, almacenando deviceInfo y location en el historial de la sesión.
+          Solo accesible para usuarios autenticados (Bearer server JWT).
+          Este endpoint permite registrar el momento en que el usuario inicia la sesión, junto con información del dispositivo y ubicación.
+        tags:
+          - Sessions (Content)
+        security:
+          - bearerAuth: []
+        parameters:
+          - name: sessionId
+            in: path
+            required: true
+            schema:
+              type: string
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    example: "user123"
+                  deviceInfo:
+                    type: object
+                    properties:
+                      deviceId:
+                        type: string
+                        example: "dev-abc"
+                      platform:
+                        type: string
+                        example: "android"
+                      osVersion:
+                        type: string
+                        example: "13.0"
+                  location:
+                    type: object
+                    properties:
+                      lat:
+                        type: number
+                        example: -34.6037
+                      lng:
+                        type: number
+                        example: -58.3816
+              examples:
+                ejemplo:
+                  value:
+                    userId: "user123"
+                    deviceInfo:
+                      deviceId: "dev-abc"
+                      platform: "android"
+                      osVersion: "13.0"
+                    location:
+                      lat: -34.6037
+                      lng: -58.3816
+        responses:
+          '200':
+            description: Inicio de sesión registrado correctamente
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    startedAt:
+                      type: string
+                      format: date-time
+                      example: "2025-08-26T23:33:52Z"
+                    sessionId:
+                      type: string
+                      example: "session123"
+                    userId:
+                      type: string
+                      example: "user123"
+                    deviceInfo:
+                      type: object
+                      properties:
+                        deviceId:
+                          type: string
+                          example: "dev-abc"
+                        platform:
+                          type: string
+                          example: "android"
+                        osVersion:
+                          type: string
+                          example: "13.0"
+                    location:
+                      type: object
+                      properties:
+                        lat:
+                          type: number
+                          example: -34.6037
+                        lng:
+                          type: number
+                          example: -58.3816
+          '400':
+            description: Faltan parámetros o body inválido
+          '403':
+            description: Acceso denegado
+          '404':
+            description: Sesión no encontrada
+          '500':
+            description: Error interno
+  /v1/sessions/{sessionId}/complete:
+    post:
+      summary: Marca la sesión como completada para el usuario
+      description: |
+        Marca la sesión como completada para el usuario. Actualiza el estado en Firestore (`estado: completada`), registra la fecha de finalización y permite inscribirse a una nueva sesión si tiene menos de 3 activas.
+        
+        **Regla:** El usuario solo puede tener 3 sesiones activas simultáneamente. Para inscribirse a una nueva, debe finalizar una de las tres.
+        
+        **Lógica:**
+        1. Verifica que el usuario esté inscrito en la sesión.
+        2. Cambia el estado de la sesión a `completada` y registra la fecha de finalización.
+        3. Permite inscribirse a una nueva sesión si el usuario tiene menos de 3 activas.
+        4. Actualiza el progreso y estadísticas del usuario.
+      tags:
+        - Sessions (Content)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+      responses:
+        '200':
+          description: Sesión marcada como completada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  sessionId:
+                    type: string
+                  puedeInscribirse:
+                    type: boolean
+          # Ejemplo de respuesta:
+          # {
+          #   "message": "Sesión completada",
+          #   "sessionId": "session123",
+          #   "puedeInscribirse": true
+          # }
+        '404':
+          description: Sesión no encontrada o usuario no inscrito
+        '403':
+          description: Acceso denegado
+        '500':
+          description: Error al actualizar la sesión  
+  /v1/users/{userId}/sessions:
+    get:
+      tags:
+        - Users
+      summary: Get all sessions for a user / Obtener todas las sesiones de un usuario
+      description: |
+        Returns all sessions for a given user.
+        Devuelve todas las sesiones de un usuario.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The user's unique identifier / El identificador único del usuario
+      responses:
+        '200':
+          description: Sessions found / Sesiones encontradas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sessionId:
+                          type: string
+                          description: Session ID / ID de la sesión
+                        title:
+                          type: string
+                          description: Title / Título
+                        progress:
+                          type: number
+                          format: float
+                          description: Progress / Progreso
+                        enrolledAt:
+                          type: string
+                          description: Enrollment date / Fecha de inscripción
+                        status:
+                          type: string
+                          description: Status / Estado
+                        completedAudios:
+                          type: array
+                          items:
+                            type: string
+                          description: Completed audios / Audios completados
+        '400':
+          description: Missing userId / Falta userId
+        '500':
+          description: Internal error / Error interno
+  /v1/sessions/{sessionId}/heartbeat:
+    post:
+      tags:
+        - Sessions (Content)
+      summary: "Registrar heartbeat de sesión/audio en tiempo real"
+      description: |
+        Recibe actualizaciones periódicas (heartbeat) del cliente mientras el usuario reproduce una sesión de audio. Soporta sesiones con múltiples audios: cada heartbeat puede incluir el campo `audioId` para identificar el audio específico que está siendo reproducido. El backend registra el progreso, interrupciones, problemas de buffering y tipo de conexión. Si se envía `audioId`, el heartbeat se almacena bajo la subcolección del audio correspondiente; si no, se guarda en la colección general de heartbeats de la sesión.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: ID del usuario (opcional si está en el JWT)
+                  example: "abc123"
+                audioId:
+                  type: string
+                  description: ID del audio que está siendo reproducido (opcional)
+                  example: "audio1"
+                position:
+                  type: integer
+                  description: Posición actual en segundos dentro del audio
+                  example: 123
+                duration:
+                  type: integer
+                  description: Duración total del audio en segundos
+                  example: 600
+                connectionType:
+                  type: string
+                  description: Tipo de conexión (wifi, cellular, offline)
+                  example: "wifi"
+                buffering:
+                  type: boolean
+                  description: Si el usuario está experimentando buffering
+                  example: false
+                deviceInfo:
+                  type: object
+                  description: Información opcional del dispositivo
+                  properties:
+                    deviceId:
+                      type: string
+                      example: "device-123"
+                    platform:
+                      type: string
+                      example: "iOS"
+                    osVersion:
+                      type: string
+                      example: "17.5"
+                timestamp:
+                  type: string
+                  format: date-time
+                  description: Marca de tiempo del heartbeat (ISO8601, opcional)
+                  example: "2025-08-30T12:34:56Z"
+            examples:
+              ejemplo:
+                value:
+                  userId: "abc123"
+                  audioId: "audio1"
+                  position: 123
+                  duration: 600
+                  connectionType: "wifi"
+                  buffering: false
+                  deviceInfo:
+                    deviceId: "device-123"
+                    platform: "iOS"
+                    osVersion: "17.5"
+                  timestamp: "2025-08-30T12:34:56Z"
+      responses:
+        '200':
+          description: Heartbeat registrado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Heartbeat registrado"
+                  sessionId:
+                    type: string
+                    example: "session123"
+                  position:
+                    type: integer
+                    example: 123
+                  buffering:
+                    type: boolean
+                    example: false
+        '400':
+          description: Body inválido o campos faltantes
+        '401':
+          description: No autenticado
+        '404':
+          description: Sesión no encontrada
+        '500':
+          description: Error interno
+  /v1/sessions/{sessionId}/download:
+    post:
+      tags:
+        - Sessions (Content)
+      summary: Solicita URL firmada para descargar audio o imagen asociada a audio para uso offline
+      description: |
+        Permite al usuario solicitar una URL firmada para descargar el audio o la imagen asociada a un audio de una sesión y usarlo offline.
+        El backend valida el plan del usuario y los límites diarios antes de generar la URL. Si el usuario no tiene permisos o excede el límite, se retorna error.
+        Para descargar una imagen asociada a audio, usa el parámetro `fileType: image` y especifica `audioId`.
+        Para descargar el audio, usa `fileType: audio`. Si quieres descargar el la cubierta de la sesion omites el parametro `audioId`
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la sesión
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: ID del usuario
+                  example: "abc123"
+                deviceId:
+                  type: string
+                  description: ID del dispositivo desde el que se solicita la descarga
+                  example: "device-123"
+                fileType:
+                  type: string
+                  enum: [audio, image]
+                  description: Tipo de archivo a descargar (audio o imagen asociada a audio)
+                  example: audio
+                audioId:
+                  type: string
+                  description: ID del audio (requerido si fileType es image)
+                  example: "audio1"
+            examples:
+              audio:
+                value:
+                  userId: "abc123"
+                  deviceId: "device-123"
+                  fileType: audio
+              imagenAudio:
+                value:
+                  userId: "abc123"
+                  deviceId: "device-123"
+                  fileType: image
+                  audioId: "audio1"
+      responses:
+        '200':
+          description: URL firmada generada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signedUrl:
+                    type: string
+                    description: URL firmada para descargar el archivo
+                    example: "https://r2.cdn/sessions/session123/audio1.mp3?signature=..."
+                  expiresAt:
+                    type: string
+                    format: date-time
+                    description: Fecha y hora de expiración de la URL
+                    example: "2025-08-30T13:00:00Z"
+              examples:
+                audio:
+                  value:
+                    signedUrl: "https://r2.cdn/sessions/session123/audio1.mp3?signature=..."
+                    expiresAt: "2025-08-30T13:00:00Z"
+                imagenAudio:
+                  value:
+                    signedUrl: "https://r2.cdn/sessions/session123/img/audio1.jpg?signature=..."
+                    expiresAt: "2025-08-30T13:00:00Z"
+        '400':
+          description: Body inválido o campos faltantes
+        '401':
+          description: No autenticado
+        '403':
+          description: Límite de descargas excedido o plan insuficiente
+        '404':
+          description: Sesión no encontrada
+        '500':
+          description: Error interno
+  /v1/library/search:
+    get:
+      summary: Búsqueda de sesiones en la librería
+      description: |
+        Realiza búsqueda full-text y filtrada sobre las sesiones disponibles en la librería. Permite buscar por título, categoría, etiquetas, nivel, fecha de lanzamiento y si la sesión es Pro. Devuelve resultados paginados.
+        **Requiere autenticación JWT de sesión (rol: user o admin).**
+      tags:
+        - Library
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          description: Texto para búsqueda en el título de la sesión (full-text, case-insensitive)
+          required: false
+          schema:
+            type: string
+        - name: category
+          in: query
+          description: |
+            Filtra por categoría (ej: "relax", "focus")
+          required: false
+          schema:
+            type: string
+        - name: tags
+          in: query
+          description: |
+            Lista de etiquetas separadas por coma (ej: "sueño,calma")
+          required: false
+          schema:
+            type: string
+        - name: level
+          in: query
+          description: |
+            Nivel de dificultad (ej: "beginner", "intermediate", "advanced")
+          required: false
+          schema:
+            type: string
+        - name: releaseDate
+          in: query
+          description: Fecha de lanzamiento (YYYY-MM-DD)
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: isPro
+          in: query
+          description: Filtra por sesiones Pro (true/false)
+          required: false
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          description: |
+            Página de resultados (default: 1)
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          description: |
+            Cantidad de resultados por página (default: 20)
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de sesiones encontradas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        description:
+                          type: string
+                        category:
+                          type: string
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                        level:
+                          type: string
+                        releaseDate:
+                          type: string
+                          format: date
+                        isPro:
+                          type: boolean
+                        duration:
+                          type: integer
+                        imageUrl:
+                          type: string
+        '400':
+          description: Parámetros inválidos
+        '401':
+          description: No autenticado
+        '403':
+          description: Usuario baneado o sin permisos
+        '500':
+          description: Error interno al buscar sesiones
+      x-codeSamples:
+        - lang: Shell
+          label: Curl Example
+          source: |
+            curl -X GET "http://localhost:8080/v1/library/search?q=relajación&category=relax&tags=sueño,calma&level=beginner&page=1&pageSize=10" \
+              -H "Authorization: Bearer <TU_TOKEN_JWT>"
+  /v1/library/categories:
+    post:
+      summary: Crea una nueva categoría
+      tags:
+        - Library
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: relax
+      responses:
+        '201':
+          description: Categoría creada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  name:
+                    type: string
+        '400':
+          description: Nombre de categoría requerido
+        '401':
+          description: Token de autenticación requerido
+        '409':
+          description: La categoría ya existe
+        '500':
+          description: Error de conexión o creación
+    get:
+      summary: Lista categorías con conteo de sesiones
+      tags:
+        - Library
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de categorías
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        sessionCount:
+                          type: integer
+        '401':
+          description: Token de autenticación requerido
+        '500':
+          description: Error de conexión o consulta
+  /v1/users/{userId}/onboarding:
+    post:
+      summary: Registrar respuestas iniciales del usuario (onboarding)
+      description: >
+        Guarda los objetivos y nivel de experiencia del usuario al instalar la app y completar el flujo de onboarding.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                goals:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    Objetivos principales (ej: "sleep", "focus")
+                experienceLevel:
+                  type: string
+                  enum: [beginner, intermediate, advanced]
+                  description: Nivel de experiencia con meditación/hipnosis
+              required:
+                - goals
+                - experienceLevel
+            example:
+              goals: ["sleep", "focus"]
+              experienceLevel: "beginner"
+      responses:
+        '200':
+          description: Onboarding registrado correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Onboarding registrado
+                  userId:
+                    type: string
+                    example: abc123
+        '400':
+          description: Body inválido o campos faltantes
+        '401':
+          description: No autenticado
+        '403':
+          description: Usuario baneado o sin permisos
+        '500':
+          description: Error interno al registrar onboarding
+  /v1/users/{userId}/favorites/{sessionId}:
+    post:
+      summary: Agrega una sesión a favoritos
+      description: Agrega una sesión a la lista de favoritos del usuario.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del usuario
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la sesión
+      responses:
+        '200':
+          description: Sesión agregada a favoritos correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Sesión agregada a favoritos
+                  sessionId:
+                    type: string
+                    example: session123
+        '400':
+          description: Falta userId o sessionId
+        '401':
+          description: No autenticado
+        '403':
+          description: Usuario baneado o sin permisos
+        '500':
+          description: Error interno al agregar favorito
+    delete:
+      summary: Eliminar sesión de favoritos
+      description: Elimina una sesión de la lista de favoritos del usuario.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del usuario
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la sesión
+      responses:
+        '200':
+          description: Sesión eliminada de favoritos correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Sesión eliminada de favoritos
+                  sessionId:
+                    type: string
+                    example: session123
+        '400':
+          description: Falta userId o sessionId
+        '401':
+          description: No autenticado
+        '403':
+          description: Usuario baneado o sin permisos
+        '404':
+          description: Favorito no encontrado
+        '500':
+          description: Error interno al eliminar favorito
+  /v1/users/{userId}/favorites:
+    get:
+      summary: Lista sesiones favoritas del usuario.
+      description: Devuelve la lista de sesiones marcadas como favoritas por el usuario.
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de sesiones favoritas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favorites:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sessionId:
+                          type: string
+                          description: ID de la sesión favorita
+                        title:
+                          type: string
+                          description: Título de la sesión
+                        category:
+                          type: string
+                          description: Categoría de la sesión
+                        imageUrl:
+                          type: string
+                          description: URL de la imagen de la sesión
+                        isPro:
+                          type: boolean
+                          description: Indica si la sesión es Pro
+                        addedAt:
+                          type: string
+                          format: date-time
+                          description: Fecha en que se agregó a favoritos
+        '400':
+          description: Falta userId
+        '401':
+          description: No autenticado
+        '403':
+          description: Usuario baneado o sin permisos
+        '500':
+          description: Error interno al consultar favoritos
+  /v1/receipt/verify:
+    post:
+      summary: Verifica un recibo de compra de Google Play o App Store.
+      description: |
+        Verifica un recibo de compra de Google Play o App Store. El backend valida el recibo con la API oficial de cada plataforma, actualiza el plan del usuario y registra la transacción.
+
+        **Control de transacciones:**
+        - Solo se permite una transacción activa por usuario.
+        - Si el usuario ya tiene una transacción activa y no ha expirado, se actualiza la expiración.
+        - Si la transacción activa ya expiró, se marca como expirada y se registra una nueva.
+
+        **Campos actualizados en el usuario:**
+        - plan, premium, planExpiration, planStatus, subscriptionSource, trial, trialDaysLeft, role
+
+        **Registro de transacciones:**
+        - Cada transacción almacena: source, receiptData, plan, purchaseDate, expirationDate, planStatus, createdAt
+
+        - Para Google Play: el campo `data` debe ser un base64 de un JSON con los campos `packageName`, `productId`, `purchaseToken`.
+        - Para App Store: el campo `data` es el recibo base64 entregado por Apple.
+      tags:
+        - Subscriptions
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: ID del usuario
+                receipt:
+                  type: object
+                  properties:
+                    source:
+                      type: string
+                      enum: [GooglePlay, AppStore]
+                      description: Plataforma de origen del recibo
+                    data:
+                      type: string
+                      description: |
+                        Para Google Play: base64 de un JSON con los campos `packageName`, `productId`, `purchaseToken`.
+                        Para App Store: recibo base64 entregado por Apple.
+            examples:
+              googlePlay:
+                summary: Ejemplo Google Play
+                value:
+                  userId: abc123
+                  receipt:
+                    source: GooglePlay
+                    data: "eyJwYWNrYWdlTmFtZSI6ImNvbS5hcHAiLCJwcm9kdWN0SWQiOiJwcmVtaXVtX21vbnRoIiwicHVyY2hhc2VUb2tlbiI6InRva2VuMTIzIn0="
+              appStore:
+                summary: Ejemplo App Store
+                value:
+                  userId: abc123
+                  receipt:
+                    source: AppStore
+                    data: "<recibo_base64_de_apple>"
+      responses:
+        '200':
+          description: Recibo verificado y plan actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  plan:
+                    type: string
+              examples:
+                success:
+                  summary: Ejemplo de respuesta exitosa
+                  value:
+                    message: Recibo verificado y plan actualizado
+                    plan: premium
+        '400':
+          description: Body inválido o faltan campos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                missingFields:
+                  summary: Faltan campos requeridos
+                  value:
+                    error: Faltan campos requeridos
+        '401':
+          description: Recibo inválido o no verificado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                invalidReceipt:
+                  summary: Recibo inválido
+                  value:
+                    error: Recibo inválido
+        '403':
+          description: Usuario baneado o sin permisos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                banned:
+                  summary: Usuario baneado
+                  value:
+                    error: Usuario baneado o sin permisos
+        '500':
+          description: Error al actualizar transacción
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              examples:
+                updateError:
+                  summary: Error al actualizar transacción
+                  value:
+                    error: Error al actualizar transacción
+  /v1/events/batch:
+    post:
+      tags:
+        - Events
+      summary: Batch ingestion for high-frequency events
+      description: |
+        Receives a batch of user events (play, pause, etc.) for high-frequency ingestion. The server expands and batches to Pub/Sub or Firestore.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                events:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                        example: "edJpSZ76WPNHJ1rPoafv6rgYMKy2"
+                      eventType:
+                        type: string
+                        example: "play"
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: "2025-09-06T12:34:56Z"
+                      data:
+                        type: object
+                        properties:
+                          sessionId:
+                            type: string
+                            example: "rZ8id6DFPyYbEFDGPmuf"
+                          audioId:
+                            type: string
+                            example: "CqJDS3QHrpWnmR15T9s"
+                          metadata:
+                            type: object
+                            properties:
+                              device:
+                                type: string
+                                example: "android"
+                              version:
+                                type: string
+                                example: "1.2.3"
+            examples:
+              ejemplo:
+                value:
+                  events:
+                    - userId: edJpSZ76WPNHJ1rPoafv6rgYMKy2
+                      eventType: play
+                      timestamp: "2025-09-06T12:34:56Z"
+                      data:
+                        sessionId: rZ8id6DFPyYbEFDGPmuf
+                        metadata:
+                          device: android
+                          version: "1.2.3"
+                    - userId: edJpSZ76WPNHJ1rPoafv6rgYMKy2
+                      eventType: play
+                      timestamp: "2025-09-06T12:34:56Z"
+                      data:
+                        sessionId: rZ8id6DFPyYbEFDGPmuf
+                        audioId: CqJDS3QHrpWnmR15T9s
+                        metadata:
+                          device: android
+                          version: "1.2.3"
+                    - userId: edJpSZ76WPNHJ1rPoafv6rgYMKy2
+                      eventType: pause
+                      timestamp: "2025-09-06T12:34:56Z"
+                      data:
+                        sessionId: rZ8id6DFPyYbEFDGPmuf
+                        audioId: CqJDS3QHrpWnmR15T9s
+                        metadata:
+                          device: android
+                          version: "1.2.3"
+      responses:
+        '200':
+          description: Batch events ingested successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Batch events ingested successfully"
+                  count:
+                    type: integer
+                    example: 2
+        '400':
+          description: Invalid body or missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: Unauthorized (invalid or missing JWT)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /v1/alerts:
+    post:
+      summary: Create or schedule an alert/reminder for a user
+      description: |
+        Crea o agenda una alerta o recordatorio para el usuario. Permite configurar el mensaje, la fecha y el tipo de alerta.
+      tags:
+        - Alerts
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: abc123
+                message:
+                  type: string
+                  example: "Recuerda tu sesión de meditación a las 21:00"
+                scheduledFor:
+                  type: string
+                  format: date-time
+                  example: "2025-09-06T21:00:00Z"
+                type:
+                  type: string
+                  enum: [reminder, motivational]
+                  example: reminder
+              required:
+                - userId
+                - message
+                - scheduledFor
+                - type
+      responses:
+        '200':
+          description: Alert scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Alert scheduled
+        '400':
+          description: Invalid request
+        '500':
+          description: Internal server error
+      x-codeSamples:
+        - lang: Curl
+          source: |
+            curl -X POST "http://localhost:8080/v1/alerts" \
+              -H "Authorization: Bearer <SERVER_JWT>" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "userId": "abc123",
+                "message": "Recuerda tu sesión de meditación a las 21:00",
+                "scheduledFor": "2025-09-06T21:00:00Z",
+                "type": "reminder"
+              }'        
+  /v1/alerts/{alertId}/send:
+    post:
+      summary: Trigger sending an alert now
+      description: |
+        Envía la alerta indicada por alertId. Solo accesible por admin o función programada.
+      tags:
+        - Alerts
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: alertId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la alerta a enviar
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+          description: ID del usuario si la alerta está en la subcolección del usuario
+      responses:
+        '200':
+          description: Alert sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Alert sent
+                  alertId:
+                    type: string
+                    example: alert123
+        '400':
+          description: Missing alertId
+        '404':
+          description: Alert not found
+        '500':
+          description: Failed to update alert status
+      x-codeSamples:
+        - lang: Curl
+          source: |
+            curl -X POST "http://localhost:8080/v1/alerts/alert123/send" \
+              -H "Authorization: Bearer <SERVER_JWT_ADMIN>"
+            curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
+              -H "Authorization: Bearer <SERVER_JWT_ADMIN>"     
+  /v1/alerts/reminder:
+    post:
+      tags:
+        - Alerts
+      summary: Configura el recordatorio de meditación del usuario
+      description: |
+        Permite al usuario configurar la hora, frecuencia y días activos para recibir recordatorios de meditación. Guarda la configuración en Firestore bajo `users/{userId}/reminders/meditation`.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - reminderTime
+                - frequency
+              properties:
+                userId:
+                  type: string
+                  description: UID del usuario
+                reminderTime:
+                  type: string
+                  example: "21:00"
+                  description: Hora del recordatorio (formato HH:mm)
+                frequency:
+                  type: string
+                  enum: [daily, weekdays, custom]
+                  description: Frecuencia del recordatorio
+                activeDays:
+                  type: array
+                  items:
+                    type: string
+                  example: ["M", "T", "W", "T", "F"]
+                  description: |
+                    Días activos (abreviaturas: M, T, W, T, F, S, U)
+      responses:
+        '200':
+          description: Configuración guardada correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Body inválido o campos obligatorios faltantes
+        '500':
+          description: Error guardando recordatorio en Firestore   
+  /v1/alerts/preferences:
+    patch:
+      tags:
+        - Alerts
+      summary: Configura los toggles de cada tipo de notificación.
+      description: Permite al usuario configurar sus preferencias de notificación.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: abc123
+                motivationalMessages:
+                  type: boolean
+                  example: true
+                achievementNotifications:
+                  type: boolean
+                  example: true
+                sessionReminders:
+                  type: boolean
+                  example: false
+              required:
+                - userId
+      responses:
+        '200':
+          description: Preferencias actualizadas correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Notification preferences updated
+        '400':
+          description: Error en el cuerpo de la petición
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno del servidor
+  /v1/alerts/message-style:
+    patch:
+      tags:
+        - Alerts
+      summary: Actualiza el estilo de los mensajes de alerta
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                style:
+                  type: string
+                  enum: [minimal, detailed, classic]
+                  example: minimal
+      responses:
+        '200':
+          description: Estilo actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  style:
+                    type: string
+        '400':
+          description: Solicitud inválida
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl -X PATCH https://api.tuapp.com/v1/alerts/message-style \
+              -H "Authorization: Bearer <token>" \
+              -H "Content-Type: application/json" \
+              -d '{"style":"minimal"}'
+  /v1/alerts/preview:
+    get:
+      tags:
+        - Alerts
+      summary: Obtiene una vista previa de los mensajes de alerta
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Accept-Language
+          in: header
+          required: false
+          schema:
+            type: string
+            example: es
+      responses:
+        '200':
+          description: Vista previa de alertas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  preview:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        message:
+                          type: string
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl -X GET https://api.tuapp.com/v1/alerts/preview \
+              -H "Authorization: Bearer <token>" \
+              -H "Accept-Language: es"
+  /v1/alerts/upcoming:
+    get:
+      tags:
+        - Alerts
+      summary: Devuelve la lista de notificaciones programadas para los próximos días
+      description: Requiere autenticación Bearer y el parámetro userId.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+            example: user123
+      responses:
+        '200':
+          description: Lista de notificaciones programadas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  upcoming:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: session
+                        title:
+                          type: string
+                          example: Focus on breathing
+                        scheduledFor:
+                          type: string
+                          format: date-time
+                          example: 2025-09-06T21:00:00Z
+                        tags:
+                          type: array
+                          items:
+                            type: string
+                          example: ["Focus", "Breathing"]
+              examples:
+                success:
+                  value:
+                    upcoming:
+                      - type: session
+                        title: Focus on breathing
+                        scheduledFor: "2025-09-06T21:00:00Z"
+                        tags: ["Focus", "Breathing"]
+                      - type: achievement
+                        title: Weekly Goal
+                        scheduledFor: "2025-09-08T21:00:00Z"
+                        tags: ["Weekly Goal"]
+        '400':
+          description: Solicitud inválida
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl -X
+  /v1/alerts/config:
+    get:
+      tags:
+        - Alerts
+      summary: Devuelve la configuración de alertas y recordatorios del usuario
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: string
+            example: abc123
+      responses:
+        '200':
+          description: Configuración de alertas y recordatorios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reminderTime:
+                    type: string
+                    example: "21:00"
+                  frequency:
+                    type: string
+                    example: "daily"
+                  activeDays:
+                    type: array
+                    items:
+                      type: string
+                    example: ["M", "T", "W", "T", "F"]
+                  motivationalMessages:
+                    type: boolean
+                    example: true
+                  achievementNotifications:
+                    type: boolean
+                    example: true
+                  sessionReminders:
+                    type: boolean
+                    example: false
+                  messageStyle:
+                    type: string
+                    example: "gentle"
+                  smartSnooze:
+                    type: boolean
+                    example: true
+                  doNotDisturbRespect:
+                    type: boolean
+                    example: true
+        '400':
+          description: Solicitud inválida
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl -X GET "https://api.tuapp.com/v1/alerts/config?userId=abc123" \
+              -H "Authorization: Bearer <server JWT>"
+
+    patch:
+      tags:
+        - Alerts
+      summary: Guarda y Actualiza la configuración de alertas y recordatorios del usuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: abc123
+                reminderTime:
+                  type: string
+                  example: "21:00"
+                frequency:
+                  type: string
+                  example: "daily"
+                activeDays:
+                  type: array
+                  items:
+                    type: string
+                  example: ["M", "T", "W", "T", "F"]
+                motivationalMessages:
+                  type: boolean
+                  example: true
+                achievementNotifications:
+                  type: boolean
+                  example: true
+                sessionReminders:
+                  type: boolean
+                  example: false
+                messageStyle:
+                  type: string
+                  example: "gentle"
+                smartSnooze:
+                  type: boolean
+                  example: true
+                doNotDisturbRespect:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Configuración actualizada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Configuración de alertas actualizada
+        '400':
+          description: Solicitud inválida
+        '401':
+          description: No autorizado
+        '500':
+          description: Error interno
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl -X PATCH https://api.tuapp.com/v1/alerts/config \
+              -H "Authorization: Bearer <server JWT>" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "userId": "abc123",
+                "reminderTime": "21:00",
+                "frequency": "daily",
+                "activeDays": ["M", "T", "W", "T", "F"],
+                "motivationalMessages": true,
+                "achievementNotifications": true,
+                "sessionReminders": false,
+                "messageStyle": "gentle",
+                "smartSnooze": true,
+                "doNotDisturbRespect": true
+              }'
+  /v1/alerts/advanced-options:
+    patch:
+      summary: Configura las opciones de snooze y respeto a DND
+      description: Actualiza los campos smartSnooze y doNotDisturbRespect en la configuración de alertas del usuario.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  example: abc123
+                smartSnooze:
+                  type: boolean
+                  example: true
+                doNotDisturbRespect:
+                  type: boolean
+                  example: true
+      responses:
+        '200':
+          description: Opciones avanzadas actualizadas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Advanced options updated
+        '400':
+          description: Solicitud inválida
+        '401':
+          description: No autenticado
+        '500':
+          description: Error interno
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl --location --request PATCH 'http://localhost:8080/v1/alerts/advanced-options' \
+            --header 'Authorization: Bearer <SERVER_JWT>' \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "userId": "abc123",
+              "smartSnooze": true,
+              "doNotDisturbRespect": true
+            }'
+  /v1/users/{userId}/profile-image:
+    post:
+      tags:
+        - Users
+      summary: "Genera una URL firmada para subir imagen de perfil de usuario"
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: contentType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [image/jpeg, image/png]
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "URL firmada generada"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  uploadUrl:
+                    type: string
+                  objectKey:
+                    type: string     
+  /v1/users/{userId}/profile-image-url:
+    patch:
+      tags:
+        - Users
+      summary: "Guarda la URL de la imagen de perfil en Firestore"
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageUrl:
+                  type: string
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: "URL de imagen actualizada"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  imageUrl:
+                    type: string 
+  /v1/users/{userId}/profile-image/download:
+    get:
+      summary: Genera una URL firmada para descargar la imagen de perfil del usuario
+      description: Retorna una URL temporal para descargar la imagen de perfil desde Cloudflare R2.
+      tags:
+        - Users
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del usuario
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: URL firmada generada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signedUrl:
+                    type: string
+                    example: "https://r2.example.com/bucket/user123/profile.jpg?..."
+                  expiresAt:
+                    type: string
+                    format: date-time
+                    example: "2025-09-07T12:00:00Z"
+        '400':
+          description: Parámetros faltantes o URL inválida
+        '404':
+          description: Usuario o imagen no encontrada
+        '500':
+          description: Error interno del servidor
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl -X GET "https://api.hipnoapp.com/v1/users/USER_ID/profile-image/download" -H "Authorization: Bearer <token>"     
+
+  /v1/auth/forgot-password:
+    post:
+      summary: Solicita código de verificación para recuperación de contraseña
+      description: Genera y envía un código de verificación al correo registrado. El código expira tras 5 minutos (configurable).
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: usuario@email.com
+      responses:
+        '200':
+          description: Código enviado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Código enviado
+                  expiresAt:
+                    type: string
+                    format: date-time
+        '400':
+          description: Email requerido
+        '404':
+          description: Usuario no encontrado
+        '500':
+          description: Error interno
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl -X POST "http://localhost:8080/v1/auth/forgot-password" \
+              -H "Content-Type: application/json" \
+              -d '{ "email": "usuario@email.com" }'
+
+  /v1/auth/resend-code:
+    post:
+      summary: Reenvía el código de verificación al correo
+      description: Reenvía el código si no ha expirado.
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: usuario@email.com
+      responses:
+        '200':
+          description: Código reenviado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Código reenviado
+                  expiresAt:
+                    type: string
+                    format: date-time
+        '400':
+          description: Email requerido o código expirado
+        '404':
+          description: Usuario o código no encontrado
+        '500':
+          description: Error interno
+      x-codeSamples:
+        - lang: Shell
+          label: curl
+          source: |
+            curl -X POST "http://localhost:8080/v1/auth/resend-code" \
+              -H "Content-Type: application/json" \
+              -d '{ "email": "usuario@email.com" }'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    UserProfile:
+      type: object
+      properties:
+        UID:
+          type: string
+        Email:
+          type: string
+        DisplayName:
+          type: string
+        Gender:
+          type: string
+        BirthDate:
+          type: string
+          format: date
+        Age:
+          type: integer
+        Language:
+          type: string
+        Country:
+          type: string
+        Plan:
+          type: string
+        PlanStatus:
+          type: string
+        PlanExpiration:
+          type: string
+          format: date
+        TrialDaysLeft:
+          type: integer
+        SubscriptionSource:
+          type: string
+        CreatedAt:
+          type: string
+          format: date-time
+        UpdatedAt:
+          type: string
+          format: date-time
