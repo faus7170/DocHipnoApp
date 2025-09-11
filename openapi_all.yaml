@@ -4,6 +4,7 @@ info:
   version: 1.0.0
   description: |
     API para autenticación y endpoints protegidos de HipnoApp
+    
     **Autenticación:** Todos los endpoints protegidos aceptan:
     - Un JWT de sesión generado por el backend (con claim `role: user` o `admin`),
     - O un Firebase ID Token (con claim `role: user` o `admin`).
@@ -25,7 +26,6 @@ paths:
       tags:
         - Admin
       summary: Actualiza la configuración global de activación de audios y sesiones activas
-    openapi: 3.0.0
       description: |
         Permite al admin modificar el intervalo de días para activar audios progresivamente (`intervalDays`) y el número máximo de sesiones activas permitidas para inscripción (`maxActiveSessions`).
         Ambos valores se almacenan en Firestore bajo el documento `config/audioActivationInterval`.
@@ -158,14 +158,125 @@ paths:
           description: Body inválido o campos faltantes
         '500':
           description: Error interno o credenciales faltantes
-  /v1/auth/validate:
+  /v1/auth/social-login:
     post:
       tags:
         - Auth
-      summary: Valida el token de Firebase y crea/actualiza el usuario
+      summary: Social Login (Google/Apple)
       description: |
-        Este endpoint valida el token de Firebase y registra o actualiza el perfil del usuario en Firestore.
-        Los campos dinámicos como `premium`, `trial`, `trialEndsAt`, `banned` y otros se inicializan o actualizan automáticamente según la lógica del backend (por ejemplo, al activar un trial, registrar una suscripción, o aplicar un ban). El usuario no puede modificar estos flags directamente.
+        Authenticates a user using a Google or Apple ID token. Returns a JWT token and the full user profile.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                provider:
+                  type: string
+                  enum: [google, apple]
+                  description: The social provider ("google" or "apple").
+                token:
+                  type: string
+                  description: The ID token received from the provider.
+              required:
+                - provider
+                - token
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+                    description: JWT token for session
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGhpcG5vYXBwLmNvbSIsImV4cCI6MTc1NzgxOTk0OSwicm9sZSI6InVzZXIifQ.Idi9tfYj2JuSp79bD4PZjI4KppEZnq4fDWc8GXUUlEg
+                  user:
+                    type: object
+                    properties:
+                      UID:
+                        type: string
+                        example: "104643996698677810244"
+                      Email:
+                        type: string
+                        example: "admin@hipnoapp.com"
+                      DisplayName:
+                        type: string
+                        example: "edwin javier Lamiña"
+                      Gender:
+                        type: string
+                        example: ""
+                      BirthDate:
+                        type: string
+                        format: date-time
+                        example: "0001-01-01T00:00:00Z"
+                      Age:
+                        type: integer
+                        example: 0
+                      Language:
+                        type: string
+                        example: ""
+                      Country:
+                        type: string
+                        example: ""
+                      Role:
+                        type: string
+                        example: "user"
+                      Plan:
+                        type: string
+                        example: "free"
+                      PlanStatus:
+                        type: string
+                        example: ""
+                      PlanExpiration:
+                        type: string
+                        format: date-time
+                        example: "2025-12-10T22:19:08.4545475-05:00"
+                      Premium:
+                        type: boolean
+                        description: Indicates if the user has a premium plan
+                        example: false
+                      Trial:
+                        type: boolean
+                        description: Indicates if the user is in trial period
+                        example: true
+                      TrialEndsAt:
+                        type: string
+                        format: date-time
+                        description: Trial period end date
+                        example: "2025-09-17T22:19:08.4545475-05:00"
+                      Banned:
+                        type: boolean
+                        description: Indicates if the user is banned
+                        example: false
+                      trialDaysLeft:
+                        type: integer
+                        example: 0
+                      SubscriptionSource:
+                        type: string
+                        example: ""
+                      CreatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-09-10T22:19:08.4545475-05:00"
+                      UpdatedAt:
+                        type: string
+                        format: date-time
+                        example: "2025-09-10T22:19:08.4545475-05:00"
+        '400':
+          description: Invalid request
+        '401':
+          description: Invalid or expired social token
+  /v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Validates the Firebase token and creates/updates the user
+      description: |
+        Login via email and password validates the Firebase token and registers or updates the user's profile in Firestore. Dynamic fields such as `Premium`, `Trial`, `TrialEndsAt`, `Banned`, and others are automatically initialized or updated based on backend logic (e.g., when activating a trial, registering a subscription, or applying a ban). The user cannot modify these flags directly.
       requestBody:
         required: true
         content:
@@ -175,69 +286,95 @@ paths:
               properties:
                 token:
                   type: string
-                  description: Token de Firebase
+                  description: Firebase Token
       responses:
         '200':
-          description: Usuario validado y creado/actualizado
+          description: User validated and created/updated
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  jwt:
+                    type: string
+                    description: JWT token for session
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGhpcG5vYXBwLmNvbSIsImV4cCI6MTc1NzgxOTk0OSwicm9sZSI6InVzZXIifQ.Idi9tfYj2JuSp79bD4PZjI4KppEZnq4fDWc8GXUUlEg
                   user:
                     type: object
                     properties:
                       UID:
                         type: string
+                        example: "104643996698677810244"
                       Email:
                         type: string
+                        example: "admin@hipnoapp.com"
                       DisplayName:
                         type: string
+                        example: "edwin javier Lamiña"
                       Gender:
                         type: string
+                        example: ""
                       BirthDate:
                         type: string
-                        format: date
+                        format: date-time
+                        example: "0001-01-01T00:00:00Z"
                       Age:
                         type: integer
+                        example: 0
                       Language:
                         type: string
+                        example: ""
                       Country:
                         type: string
+                        example: ""
+                      Role:
+                        type: string
+                        example: "user"
                       Plan:
                         type: string
+                        example: "free"
                       PlanStatus:
                         type: string
+                        example: ""
                       PlanExpiration:
                         type: string
-                        format: date
+                        format: date-time
+                        example: "2025-12-10T22:19:08.4545475-05:00"
                       Premium:
                         type: boolean
-                        description: Indica si el usuario tiene plan premium
+                        description: Indicates if the user has a premium plan
+                        example: false
                       Trial:
                         type: boolean
-                        description: Indica si el usuario está en periodo de prueba
+                        description: Indicates if the user is in trial period
+                        example: true
                       TrialEndsAt:
                         type: string
                         format: date-time
-                        description: Fecha de fin del periodo de prueba
+                        description: Trial period end date
+                        example: "2025-09-17T22:19:08.4545475-05:00"
                       Banned:
                         type: boolean
-                        description: Indica si el usuario está baneado
-                      TrialDaysLeft:
+                        description: Indicates if the user is banned
+                        example: false
+                      trialDaysLeft:
                         type: integer
+                        example: 0
                       SubscriptionSource:
                         type: string
+                        example: ""
                       CreatedAt:
                         type: string
                         format: date-time
+                        example: "2025-09-10T22:19:08.4545475-05:00"
                       UpdatedAt:
                         type: string
                         format: date-time
+                        example: "2025-09-10T22:19:08.4545475-05:00"
         '400':
-          description: Token inválido o faltante
+          description: Invalid or missing token
         '500':
-          description: Error interno
+          description: Internal server error
   /v1/auth/refresh:
     post:
       tags:

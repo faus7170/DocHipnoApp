@@ -3,11 +3,10 @@
 **Base URL (example):** `https://api.hipnoapp.example.com/v1`
 
 Authentication: All protected endpoints require a valid Firebase ID Token passed in `Authorization: Bearer <ID_TOKEN>` header. Backend verifies token with Firebase Admin SDK. Some endpoints also require a server-issued session JWT for additional session validation.
+**Dynamic User Flags:**
+For each authenticated request, the backend fetches dynamic user flags from Firestore (`/users/{uid}`), such as `premium`, `trial`, `banned`, etc. These flags are available in handlers via `c.Locals("flags")`.
 
-**Flags dinámicos de usuario:**
-En cada request autenticada, el backend consulta los flags dinámicos del usuario en Firestore (`/users/{uid}`), como `premium`, `trial`, `banned`, etc. Estos flags están disponibles en los handlers vía `c.Locals("flags")`.
-
-**Ejemplo de uso en Go:**
+**Usage example in Go:**
 ```go
 flags := c.Locals("flags").(map[string]interface{})
 if flags["premium"] == true {
@@ -17,23 +16,105 @@ if flags["banned"] == true {
   return c.Status(403).JSON(fiber.Map{"error": "Usuario baneado"})
 }
 ```
-/v1/sessions/{sessionId}/audios
 ---
+
 ## Authentication & Session
-### POST /v1/auth/validate
-- **Description:** Validate Firebase ID token, create or update server session, return server JWT and user profile.
+### POST /v1/auth/login
+- **Description:** Login via email and password validates the Firebase token and registers or updates the user's profile in Firestore.
+Dynamic fields such as `premium`, `trial`, `trialEndsAt`, `banned`, and others are automatically initialized or updated based on backend logic (e.g., when activating a trial, registering a subscription, or applying a ban). The user cannot modify these flags directly.
 - **Auth:** None (accepts Firebase ID token)
 - **Body:**
 ```json
-{ "idToken": "<firebase_id_token>" }
+{
+    "idToken": "<FIREBASE-TOKEN>",
+    "displayName": "Gabriela Molina",
+    "gender": "male",
+    "birthDate": "2020-01-01T00:00:00Z",
+    "age": 30,
+    "language": "es",
+    "country": "CO",
+    "plan": "free",
+    "planStatus": "active",
+    "planExpiration": "2025-12-31T23:59:59Z",
+    "trialDaysLeft": 7,
+    "subscriptionSource": "GooglePlay"
+  }```
+- **Response:**
+```json
+{
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc2NDc2OTAsImlhdCI6MTc1NzU2MTI5MCwicm9sZSI6InVzZXIiLCJ1aWQiOiIxbTRxb0JNYWh1WTllUVNuN2lCYTlzMlRuVXYxIn0.DpwWw-jI-GF2k3p9e7l-Xj0Lz7rvL-dOiVIo-T972wA",
+    "user": {
+        "UID": "1m4qoBMahuY9eQSn7iBa9s2TnUv1",
+        "Email": "faus_tito29@hotmail.com",
+        "DisplayName": "Gabriela Molina",
+        "Gender": "male",
+        "BirthDate": "2020-01-01T00:00:00Z",
+        "Age": 30,
+        "Language": "es",
+        "Country": "CO",
+        "Role": "",
+        "Plan": "free",
+        "PlanStatus": "active",
+        "PlanExpiration": "2025-12-31T23:59:59Z",
+        "Premium": false,
+        "Trial": true,
+        "TrialEndsAt": "2025-09-17T22:28:09.4911412-05:00",
+        "Banned": false,
+        "trialDaysLeft": 7,
+        "SubscriptionSource": "GooglePlay",
+        "CreatedAt": "2025-09-10T22:28:09.4911412-05:00",
+        "UpdatedAt": "2025-09-10T22:28:09.4911412-05:00"
+    }
+}
+```
+
+## Authentication & Session
+### POST /v1/auth/social-login
+- **Description:** Authenticates a user using a Google or Apple ID token. Returns a JWT token and user role.
+- **Body:**
+```json
+{
+  "provider": "google", // or "apple"
+  "token": "<ID_TOKEN_FROM_PROVIDER>"
+}
 ```
 - **Response:**
 ```json
-{ "jwt": "<server_jwt>", "user": { ... } }
+{
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGhpcG5vYXBwLmNvbSIsImV4cCI6MTc1NzgxOTk0OSwicm9sZSI6InVzZXIifQ.Idi9tfYj2JuSp79bD4PZjI4KppEZnq4fDWc8GXUUlEg",
+    "user": {
+        "UID": "104643996698677810244",
+        "Email": "admin@hipnoapp.com",
+        "DisplayName": "edwin javier Lamiña",
+        "Gender": "",
+        "BirthDate": "0001-01-01T00:00:00Z",
+        "Age": 0,
+        "Language": "",
+        "Country": "",
+        "Role": "user",
+        "Plan": "free",
+        "PlanStatus": "",
+        "PlanExpiration": "2025-12-10T22:19:08.4545475-05:00",
+        "Premium": false,
+        "Trial": true,
+        "TrialEndsAt": "2025-09-17T22:19:08.4545475-05:00",
+        "Banned": false,
+        "trialDaysLeft": 0,
+        "SubscriptionSource": "",
+        "CreatedAt": "2025-09-10T22:19:08.4545475-05:00",
+        "UpdatedAt": "2025-09-10T22:19:08.4545475-05:00"
+    }
+}
 ```
-
-
-
+- **Example cURL:**
+```sh
+curl -X POST https://your-domain.up.railway.app/v1/auth/social-login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider": "google",
+    "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ij..."
+  }'
+```
 
 
 ### POST /v1/auth/refresh
@@ -74,14 +155,27 @@ if flags["banned"] == true {
   ```
 
 ### POST /v1/auth/signout
-- **Description:** Invalidate server session JWT and optionally revoke Firebase refresh token.
-- **Auth:** Bearer server JWT
+- **Description:** Invalidates the server session JWT and optionally revokes the Firebase refresh token.
+- **Authentication:** Requires Bearer server JWT in the Authorization header.
+
+**Request:**
+
+No body required.
+
+**Response:**
+
+```
+{
+  "message": "Session successfully invalidated"
+}
+```
+
+**Errors:**
+- 401: Missing or invalid JWT
 
 ---
 
-## Users & Profile
-> **Nota de roles:** Los endpoints bajo esta sección solo pueden ser accedidos por usuarios con rol `user` (Bearer server JWT con `role: "user"`). El rol `admin` no tiene acceso a estos endpoints, excepto donde se indique explícitamente (por ejemplo, consulta de perfiles).
-
+> **Role Note:** The endpoints in this section can only be accessed by users with the `user` role (Bearer server JWT with `role: "user"`). The `admin` role does not have access to these endpoints, except where explicitly indicated (for example, profile queries).
 
 
 ### GET /v1/users/{userId}
@@ -1610,7 +1704,7 @@ curl -X POST "http://localhost:8080/v1/events/batch" \
     "scheduledFor": "2025-09-06T21:00:00Z",
     "type": "reminder"
   }
-```		
+```	
 
 **Response:**			
 ```json
@@ -1790,7 +1884,8 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
 ### GET /v1/alerts/upcoming
 - **Description:** Devuelve la lista de notificaciones programadas para los próximos días.
 - **Auth:** Bearer server JWT
-- **Query params:** `userId`
+- **Query params:** 
+  - `userId`
 - **Response:**
 ```json
 {
@@ -1818,7 +1913,7 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
 
 **Request Example:**
 ```sh
-curl -X GET "https://api.tuapp.com/v1/alerts/upcoming?userId=user123" \
+curl -X GET "https://api.tuapp.com/v1/alerts/upcoming?userId=abc123" \
   -H "Authorization: Bearer <server JWT>"
 ```		
 
