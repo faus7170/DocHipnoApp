@@ -195,13 +195,16 @@ No body required.
     "trialEndsAt": "2025-09-01T00:00:00Z",
     "planExpiresAt": "2025-12-31T00:00:00Z",
     "banned": false,
-    ...otros campos...
+    "trialDaysLeft": 7,
+    "SubscriptionSource": "GooglePlay",
+    "CreatedAt": "2025-09-08T01:52:28.705391Z",
+    "UpdatedAt": "2025-09-08T01:53:11.127021Z"
   }
 }
 ```
 
 ### PATCH /v1/users/{userId}
-- **Description:** Actualiza el perfil completo del usuario. Permite modificar campos como `displayName`, `email`, `gender`, `birthDate`, `age`, `language`, `country`, además de información de suscripción (`plan`, `planStatus`, `planExpiration`, `premium`, `trial`, `trialEndsAt`, `trialDaysLeft`, `subscriptionSource`), flags (`banned`), y fechas de creación/actualización.
+- **Description:** Updates the user's complete profile. Allows modifying fields such as `displayName`, `email`, `gender`, `birthDate`, `age`, `language`, `country`, as well as subscription information (`plan`, `planStatus`, `planExpiration`, `premium`, `trial`, `trialEndsAt`, `trialDaysLeft`, `subscriptionSource`), flags (`banned`), and creation/update dates.
 - **Auth:** Bearer server JWT (rol: user)
 - **Body:**
   ```json
@@ -261,10 +264,10 @@ No body required.
     }'
   ```
 - **Errors:**
-  - 400: Body inválido o campos faltantes
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 500: Error interno al actualizar usuario
+  - 400: Invalid body or missing fields
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 500: Internal error updating user
 
 ### POST /v1/users/{userId}/device/register
 - **Description:** Register a device for push notifications and analytics. Stores deviceId, platform, osVersion, fcmToken.
@@ -272,7 +275,7 @@ No body required.
 - **Body:** `{ "deviceId": "...", "platform": "iOS|Android|Web", "osVersion": "...", "fcmToken": "..." }`
 
 ### POST /v1/users/{userId}/device/unregister
-- **Description:** Desregistrar un dispositivo del usuario (elimina el deviceId de la colección de dispositivos del usuario en Firestore)
+- **Description:** Unregister a user's device (removes the deviceId from the user's devices collection in Firestore)
 				   														
 - **Auth:** Bearer server JWT
 - **Body:**
@@ -285,8 +288,8 @@ No body required.
 { "message": "Dispositivo desregistrado" }
 ```												  
 - **Errors:**
-  - 400: Falta el userId o deviceId
-  - 500: Error al desregistrar el dispositivo
+  - 400: Missing userId or deviceId
+  - 500: Error unregistering device
 - **Curl Example:**
 ```sh
 curl -X POST "http://localhost:8080/v1/users/{userId}/device/unregister" \
@@ -295,12 +298,12 @@ curl -X POST "http://localhost:8080/v1/users/{userId}/device/unregister" \
   -d '{ "deviceId": "device-123" }'
 ```												 
 ### POST /v1/users/:userId/profile-image
-- **Description:** Genera una URL firmada para que el frontend suba la imagen de perfil del usuario directamente a Cloudflare R2.
+- **Description:** Generates a signed URL so the frontend can upload the user's profile image directly to Cloudflare R2.
 				   														
 - **Auth:** Bearer server JWT
 - **Parámetros:**
-  - userId (path): ID del usuario.
-  - contentType (query, opcional): image/jpeg (por defecto) o image/png.
+  - userId (path): User ID.
+  - contentType (query, optional): image/jpeg (default) or image/png.
 
 - **Response:**
 ```json
@@ -310,8 +313,8 @@ curl -X POST "http://localhost:8080/v1/users/{userId}/device/unregister" \
 }
 ```												  
 - **Errors:**
-  - 400: Falta el userId o deviceId
-  - 500: Error al desregistrar el dispositivo
+  - 400: Missing userId or deviceId
+  - 500: Error unregistering device
 - **Curl Example:**
 ```sh
 curl -X POST "http://localhost:8080/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile-image?contentType=image/jpeg" \
@@ -321,7 +324,7 @@ curl -X POST "http://localhost:8080/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profil
 ---
 
 ### PUT <uploadUrl>
-- **Description:** Sube la imagen al URL firmado en cloudflare S2 recibido en el paso anterior..
+- **Description:** Upload the image to the signed Cloudflare R2 URL received in the previous step.
 
 - **Headers:**
   - Content-Type: image/jpeg o image/png
@@ -330,7 +333,7 @@ curl -X POST "http://localhost:8080/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profil
   - 200 OK
 											  
 - **Errors:**
-  - 500: Error al desregistrar el dispositivo
+  - 500: Error unregistering device
 
 - **Curl Example:**
 ```sh
@@ -341,7 +344,7 @@ curl -X PUT "<uploadUrl>" \
 
 ---
 ### PATCH /v1/users/:userId/profile-image-url
-- **Description:** Guarda la URL pública de la imagen de perfil en el documento del usuario en Firestore..
+- **Description:** Saves the public profile image URL in the user's document in Firestore.
 				   														
 - **Auth:** Bearer server JWT
 
@@ -360,8 +363,8 @@ curl -X PUT "<uploadUrl>" \
 }
 ```											  
 - **Errors:**
-  - 400: Falta el userId o deviceId
-  - 500: Error al desregistrar el dispositivo
+  - 400: Missing userId or deviceId
+  - 500: Error unregistering device
 - **Curl Example:**
 ```sh
 curl -X PATCH "http://localhost:8080/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile-image-url" \
@@ -372,12 +375,11 @@ curl -X PATCH "http://localhost:8080/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profi
 ---
 
 ### GET /v1/users/:userId/profile-image/download
-- **Description:** Genera una URL firmada temporal para descargar la imagen de perfil del usuario desde Cloudflare R2. La URL expira después de unos minutos por seguridad.
+- **Description:** Generates a temporary signed URL to download the user's profile image from Cloudflare R2. The URL expires after a few minutes for security.
 				   														
 - **Auth:** Bearer server JWT
-
-- **Parámetros:**
-  - userId (path): ID del usuario
+- **Parameters:**
+  - userId (path): User ID
 						  
 - **Response:**
 ```json
@@ -386,10 +388,9 @@ curl -X PATCH "http://localhost:8080/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profi
   "expiresAt": "2025-09-07T12:00:00Z"
 }
 ```											  
-- **Errors:**
- - 400: Faltan parámetros o URL inválida
- - 404: Usuario o imagen no encontrada
- - 500: Error interno (Firestore, R2, etc)
+- 400: Missing parameters or invalid URL
+- 404: User or image not found
+- 500: Internal error (Firestore, R2, etc)
 
 - **Curl Example:**
 ```sh
@@ -398,10 +399,9 @@ curl -X GET "https://api.hipnoapp.com/v1/users/USER_ID/profile-image/download" -
 ---
 
 ### POST /v1/auth/forgot-password
-- **Description:** Genera un código de verificación de 6 dígitos, lo almacena en Firestore y lo envía al correo registrado. El código expira tras 5 minutos (configurable).
-				   														
+- **Description:** Generates a 6-digit verification code, stores it in Firestore, and sends it to the registered email. The code expires after 5 minutes (configurable).
 
-- **Parámetros:**
+- **Params:**
 ```json
 { "email": "usuario@email.com" }
 ```
@@ -411,9 +411,9 @@ curl -X GET "https://api.hipnoapp.com/v1/users/USER_ID/profile-image/download" -
 { "message": "Código enviado", "expiresAt": "2025-09-07T12:05:00Z" }
 ```											  
 - **Errors:**
- - 400: Email requerido
- - 404: Usuario no encontrado
- - 500: Error interno
+ - 400: Email required
+ - 404: User not found
+ - 500: Internal error
 
 - **Curl Example:**
 ```sh
@@ -425,9 +425,8 @@ curl -X POST "http://localhost:8080/v1/auth/forgot-password" \
 
 ### POST /v1/auth/resend-code
 - **Description:**  Reenvía el código de verificación al correo si no ha expirado.
-				   														
 
-- **Parámetros:**
+- **Params:**
 ```json
 { "email": "usuario@email.com" }
 ```
@@ -437,9 +436,9 @@ curl -X POST "http://localhost:8080/v1/auth/forgot-password" \
 { "message": "Código enviado", "expiresAt": "2025-09-07T12:05:00Z" }
 ```											  
 - **Errors:**
- - 400: Email requerido
- - 404: Usuario no encontrado
- - 500: Error interno
+- 400: Email required
+- 404: User not found
+- 500: Internal error
 
 - **Curl Example:**
 ```sh
@@ -451,15 +450,15 @@ curl -X POST "http://localhost:8080/v1/auth/resend-code" \
 
 
 ## Admin / CMS Endpoints
-> **Nota de roles:** Los endpoints bajo esta sección solo pueden ser accedidos por usuarios con rol `admin` (Bearer server JWT con `role: "admin"`). Los usuarios normales (rol `user`) no tienen acceso a estos endpoints.
+> **Role Note:** The endpoints in this section can only be accessed by users with the `admin` role (Bearer server JWT with `role: "admin"`). Regular users (`user` role) do not have access to these endpoints.
 
 ### POST /v1/admin/assign-role
-- **Description:** Asigna el rol `admin` o `user` a un usuario en Firebase Auth (solo admin puede usar este endpoint).
+- **Description:** Assigns the `admin` or `user` role to a user in Firebase Auth (only admins can use this endpoint).
 - **Auth:** Bearer server JWT (admin)
 - **Body:**
 ```json
 {
-  "uid": "UID_DEL_USUARIO",
+  "uid": "UID_USER",
   "role": "admin" // o "user"
 }
 ```
@@ -467,9 +466,8 @@ curl -X POST "http://localhost:8080/v1/auth/resend-code" \
 ```json
 { "message": "Rol asignado", "uid": "UID_DEL_USUARIO", "role": "admin" }
 ```
-- **Errors:**
-  - 400: Faltan uid o role, o rol inválido
-  - 500: Error al asignar el rol
+- 400: Missing uid or role, or invalid role
+- 500: Error assigning role
 - **Curl Example:**
 ```sh
 # Usando JWT de sesión admin
@@ -486,7 +484,7 @@ curl -X POST "http://localhost:8080/v1/admin/assign-role" \
 ```
 
 ### POST /v1/admin/sessions
-- **Descripción:** Crear nueva sesión de audio (admin). La sesión solo contiene la imagen general y los metadatos. Los audios se gestionan en una subcolección aparte.
+- **Description:** Create new audio session (admin). The session only contains the general image and metadata. Audios are managed in a separate subcollection.
 - **Auth:** Bearer server JWT (admin)
 - **Body:**
 ```json
@@ -567,12 +565,11 @@ curl -X PATCH "http://localhost:8080/v1/admin/sessions/{sessionId}" \
   }'
 ```
 ### POST /v1/admin/sessions/{sessionId}/audios
-- **Descripción:** Agrega un audio a la sesión indicada. Cada audio tiene su propio archivo, imagen, título, duración y orden.
+- **Description:** Adds an audio track to the specified session. Each audio has its own file, image, title, duration, and order.
 - **Auth:** Bearer server JWT (admin)
 - **Path Params:**
-
-  - `sessionId`: ID de la sesión a la que se agrega el audio.
-**Body:**
+  - `sessionId`: ID of the session to which the audio is being added.
+  **Body:**
   ```json
   {
     "title": "Intro",
@@ -602,15 +599,15 @@ curl -X PATCH "http://localhost:8080/v1/admin/sessions/{sessionId}" \
     }'
   ```
 
-> **Nota importante:**
-> El campo `audioUrl` es solo una referencia lógica al objeto en R2. Para descargar o reproducir el audio, el cliente debe solicitar la URL firmada mediante el endpoint `/v1/sessions/{sessionId}/download`, enviando tanto el `sessionId` como el `audioId` correspondiente. El backend valida el acceso y genera una URL temporal para ese audio específico.
+> **Important Note:**
+> The `audioUrl` field is only a logical reference to the object in R2. To download or play the audio, the client must request the signed URL using the `/v1/sessions/{sessionId}/download` endpoint, sending both the `sessionId` and the corresponding `audioId`. The backend validates access and generates a temporary URL for that specific audio.
 
 ### DELETE /v1/admin/sessions/{sessionId}
 - **Description:** Delete session metadata (soft-delete recommended).
 - **Auth:** Bearer server JWT (admin)
 - **Response:**
 ```json
-{ "id": "sessionId", "message": "Sesión eliminada" }
+{ "id": "sessionId", "message": "Session deleted" }
 ```
 - **Curl Example:**
 ```sh
@@ -619,7 +616,7 @@ curl -X DELETE "http://localhost:8080/v1/admin/sessions/{sessionId}" \
 ```
 
 ### POST /v1/admin/upload
-**Description:** Solicita una URL de subida firmada para Cloudflare R2. Permite subir archivos de audio (`.mp3`) o imagen (`.jpg`) para una sesión o audio específico. La ruta se genera automáticamente según el tipo.
+**Description:** Requests a signed upload URL for Cloudflare R2. Allows uploading audio files (`.mp3`) or images (`.jpg`) for a specific session or audio. The object path is automatically generated based on the file type.
 **Auth:** Bearer server JWT (admin)
 **Body:**
 ```json
@@ -673,16 +670,16 @@ curl -X POST "http://localhost:8080/v1/admin/upload" \
   }'
 ```
 
-### PUT <uploadUrl> (Subida de archivo real a Cloudflare R2)
-- **Descripción:** Sube el archivo de audio o imagen directamente a Cloudflare R2 usando la URL pre-firmada (`uploadUrl`) obtenida previamente del backend.
-- **Auth:** No requiere autenticación (la URL ya incluye permisos temporales).
+### PUT <uploadUrl> (Actual file upload to Cloudflare R2)
+- **Description:** Upload the audio or image file directly to Cloudflare R2 using the pre-signed `uploadUrl` obtained from the backend.
+- **Auth:** No authentication required (the URL already includes temporary permissions).
 - **Headers:**
-  - `Content-Type: audio/mpeg` (para audio)
-  - `Content-Type: image/jpeg` (para imagen)
-- **Body:** Binario del archivo.
-- **Notas:**
-  - La URL `uploadUrl` es válida solo por tiempo limitado.
-  - El backend no recibe el archivo directamente; solo gestiona la generación de la URL.
+  - `Content-Type: audio/mpeg` (for audio)
+  - `Content-Type: image/jpeg` (for image)
+- **Body:** Binary file content.
+- **Notes:**
+  - The `uploadUrl` is only valid for a limited time.
+  - The backend does not receive the file directly; it only manages the URL generation.
 - **Ejemplo de uso (audio):**
   ```sh
   curl -X PUT "<uploadUrl>" \
@@ -724,10 +721,10 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
 ```
 
 ### GET /v1/sessions/{sessionId}
-- **Descripción:** Obtiene la metadata de una sesión específica, incluyendo título, descripción, duración, referencia de audio, imagen, si es Pro y etiquetas.
-- **Auth:** Opcional (si se envía JWT, la respuesta puede incluir información sobre disponibilidad según el plan del usuario).
+- **Description:** Retrieves the metadata for a specific session, including title, description, duration, audio reference, image, Pro status, and tags.
+- **Auth:** Optional (if a JWT is provided, the response may include availability information based on the user's plan).
 - **Path Params:**
-  - `sessionId`: ID de la sesión a consultar.
+  - `sessionId`: ID of the session to query.
 - **Response:**
   ```json
   {
@@ -746,8 +743,8 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
   }
   ```
 - **Errores:**
-  - 404: Sesión no encontrada
-  - 403: Acceso denegado (si la sesión es Pro y el usuario no tiene acceso)
+  - 404: Session not found
+  - 403: Access denied (if the session is Pro and the user does not have access)
 - **Curl Example:**
   ```sh
   curl -X GET "http://localhost:8080/v1/sessions/session123" \
@@ -816,29 +813,29 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
     -H "Authorization: Bearer <TU_TOKEN_JWT>"
   ```
 
-### 3. Consultar audios activos en una sesión
+### 3. Query active audios in a session
 #### GET /v1/sessions/{sessionId}/audios
 <!--
-  Devuelve los audios de una sesión y determina cuáles están activos para el usuario según su fecha de inscripción y el intervalo de activación configurado.
+  Returns the audios of a session and determines which are active for the user based on their enrollment date and the configured activation interval.
 
-  ### Lógica de activación de audios:
-  1. Se obtiene la fecha de inscripción del usuario a la sesión desde `users/{userId}/sessions/{sessionId}`.
-  2. El intervalo de activación de audios se consulta desde la configuración global (`config/audioActivationInterval` en Firestore, valor por defecto: 3 días).
-  3. Los audios de la sesión se listan ordenados por el campo `order`.
-  4. Para cada audio, se calcula si está activo:
-    - El audio en la posición N (`order=N`) se activa cuando han transcurrido al menos N * intervalo días desde la fecha de inscripción.
-    - Ejemplo: Si la inscripción fue el 1 de agosto y el intervalo es 3 días:
-      - Audio 1 (`order=1`): activo desde el 1 de agosto.
-      - Audio 2 (`order=2`): activo desde el 4 de agosto.
-      - Audio 3 (`order=3`): activo desde el 7 de agosto.
-  5. El campo `isActive` se determina para cada audio y se incluye en la respuesta.
+  ### Audio activation logic:
+  1. The user's enrollment date for the session is obtained from `users/{userId}/sessions/{sessionId}`.
+  2. The audio activation interval is fetched from the global configuration (`config/audioActivationInterval` in Firestore, default value: 3 days).
+  3. Session audios are listed ordered by the `order` field.
+  4. For each audio, it is calculated whether it is active:
+    - The audio at position N (`order=N`) becomes active when at least N * interval days have passed since the enrollment date.
+    - Example: If enrollment was on August 1 and the interval is 3 days:
+      - Audio 1 (`order=1`): active from August 1.
+      - Audio 2 (`order=2`): active from August 4.
+      - Audio 3 (`order=3`): active from August 7.
+  5. The `isActive` field is determined for each audio and included in the response.
 
-  Esta lógica permite que los audios se desbloqueen progresivamente conforme el usuario avanza en la sesión, promoviendo un acceso escalonado al contenido.
+  This logic allows audios to be progressively unlocked as the user advances through the session, promoting staggered access to content.
 
-  ### Autenticación:
-  - Requiere autenticación Bearer con JWT del servidor.
+  ### Authentication:
+  - Requires Bearer authentication with server JWT.
 -->
-- **Descripción:** Devuelve los audios de la sesión y cuáles están activos para el usuario según la fecha de inscripción y el intervalo configurado.
+- **Description:** Returns the session audios and which are active for the user based on enrollment date and configured interval.
 - **Auth:** Bearer server JWT
 - **Query params:** `userId`
 - **Response:**
@@ -856,8 +853,8 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
   }
   ```
 - **Errores:**
-  - 404: Sesión no encontrada
-  - 403: Acceso denegado (si el usuario no tiene acceso a los audios activos)
+  - 404: Session not found
+  - 403: Access denied (if the user does not have access to active audios)
 - **Curl Example:**
   ```sh
   curl -X GET "http://localhost:8080/v1/sessions/{sessionId}/audios?userId={userId}" \
@@ -867,14 +864,14 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
 ---
 
 
-### 4. Finalizar sesión
+### Complete Session
 #### POST /v1/sessions/{sessionId}/complete
-- **Descripción:** Marca la sesión como completada para el usuario. Actualiza el estado de la sesión inscrita en Firestore (`estado: completada`), registra la fecha de finalización y permite inscribirse a una nueva sesión si tiene menos de 3 activas.
-- **Lógica:**
-  1. Verifica que el usuario esté inscrito en la sesión.
-  2. Cambia el estado de la sesión a `completada` y registra la fecha de finalización.
-  3. Permite inscribirse a una nueva sesión si el usuario tiene menos de 3 activas.
-  4. Actualiza el progreso y estadísticas del usuario.
+- **Description:** Marks the session as completed for the user. Updates the enrolled session status in Firestore (`status: completed`), records the completion date, and allows the user to enroll in a new session if they have fewer than 3 active sessions.
+- **Logic:**
+  1. Verifies that the user is enrolled in the session.
+  2. Changes the session status to `completed` and records the completion date.
+  3. Allows enrollment in a new session if the user has fewer than 3 active sessions.
+  4. Updates the user's progress and statistics.
 - **Auth:** Bearer server JWT
 - **Body:**
   ```json
@@ -884,10 +881,10 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
   ```json
   { "message": "Sesión completada", "sessionId": "session123" }
   ```
-- **Errores:**
-  - 404: Sesión no encontrada o usuario no inscrito
-  - 403: Acceso denegado
-  - 500: Error al actualizar la sesión
+- **Errors:**
+  - 404: Session not found or user not enrolled
+  - 403: Access denied
+  - 500: Error updating session
 - **Curl Example:**
   ```sh
   curl -X POST "http://localhost:8080/v1/sessions/session123/complete" \
@@ -898,7 +895,7 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
 ---
 
 #### POST /v1/admin/config/audio-activation-interval
-- **Descripción:** Actualiza la configuración global para la activación progresiva de audios y el número máximo de sesiones activas permitidas para inscripción.
+- **Description:** Updates the global configuration for progressive audio activation and the maximum number of active sessions allowed for enrollment.
 - **Auth:** Bearer server JWT (admin)
 - **Body:**
   ```json
@@ -910,15 +907,15 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
 - **Response:**
   ```json
   {
-    "message": "Configuración actualizada",
+    "message": "Configuration updated",
     "intervalDays": 5,
     "maxActiveSessions": 3
-  }
-  ```
-- **Errores:**
-  - 400: Body inválido o campos faltantes
-  - 401: No autorizado (JWT inválido o sin rol admin)
-  - 500: Error interno o credenciales faltantes
+    }
+    ```
+  - **Errors:**
+    - 400: Invalid body or missing fields
+    - 401: Unauthorized (invalid JWT or missing admin role)
+    - 500: Internal error or missing credentials
 - **Curl Example:**
   ```sh
   curl -X POST "http://localhost:8080/v1/admin/config/audio-activation-interval" \
@@ -928,9 +925,9 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
   ```
   ### POST /v1/sessions/{sessionId}/start
 
-  - **Descripción:** Marca el inicio de una sesión para el usuario. Crea una entrada preliminar en el historial de sesiones (`sessions_history`) que registra cuándo el usuario comenzó la sesión, desde qué dispositivo y ubicación. Este registro se utiliza para calcular el tiempo total de escucha, estadísticas y logros.
-  - **Autenticación:** Requiere JWT del servidor (Bearer).
-  - **Body:**
+  - **Description:** Marks the start of a session for the user. Creates a preliminary entry in the session history (`sessions_history`) that records when the user started the session, from which device and location. This record is used to calculate total listening time, statistics, and achievements.
+    - **Authentication:** Requires server JWT (Bearer).
+    - **Body:**
     ```json
     {
       "userId": "abc123",
@@ -945,24 +942,24 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
       }
     }
     ```
-  - **Respuesta:**
+  - **Response:**
     ```json
     {
-      "message": "Inicio de sesión registrado",
+      "message": "Session start recorded",
       "sessionId": "session123",
       "startedAt": "2025-08-10T12:34:56Z"
     }
     ```
-  - **Notas:**
-    - El backend registra la hora de inicio y asocia el dispositivo y ubicación si se proveen.
-    - La entrada en `sessions_history` se actualizará posteriormente con el progreso y la finalización.
-    - Puede usarse para estadísticas, logros y control de uso.
-  - **Errores:**
-    - 400: Datos faltantes o inválidos
-    - 401: No autenticado
-    - 404: Sesión no encontrada
-    - 500: Error interno
-  - **Ejemplo Curl:**
+    - **Notes:**
+    - The backend records the start time and associates device and location if provided.
+    - The entry in `sessions_history` will be updated later with progress and completion.
+    - Can be used for statistics, achievements, and usage tracking.
+    - **Errors:**
+    - 400: Missing or invalid data
+    - 401: Not authenticated
+    - 404: Session not found
+    - 500: Internal error
+    - **Curl Example:**
     ```sh
     curl -X POST "http://localhost:8080/v1/sessions/session123/start" \
       -H "Authorization: Bearer <TU_TOKEN_JWT>" \
@@ -983,25 +980,25 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
 
 ### POST /v1/sessions/{sessionId}/heartbeat
 
--- **Descripción:** Este endpoint recibe actualizaciones periódicas ("heartbeat") del cliente mientras el usuario reproduce una sesión de audio. Soporta sesiones con múltiples audios: cada heartbeat puede incluir el campo `audioId` para identificar el audio específico que está siendo reproducido. El backend registra el progreso en tiempo real, detecta interrupciones, problemas de buffering y el tipo de conexión de red. Los datos recopilados se usan para estadísticas de uso, reanudación de sesiones, monitoreo de calidad y análisis de experiencia del usuario. Si se envía `audioId`, el heartbeat se almacena bajo la subcolección del audio correspondiente; si no, se guarda en la colección general de heartbeats de la sesión.
+- **Description:** This endpoint receives periodic "heartbeat" updates from the client while the user is playing an audio session. It supports sessions with multiple audios: each heartbeat can include the `audioId` field to identify the specific audio being played. The backend records real-time progress, detects interruptions, buffering issues, and network connection type. The collected data is used for usage statistics, session resumption, quality monitoring, and user experience analysis. If `audioId` is sent, the heartbeat is stored under the corresponding audio's subcollection; if not, it is saved in the general heartbeats collection for the session.
 
-- **Autenticación:** Requiere JWT del servidor (Bearer).
+- **Authentication:** Requires server JWT (Bearer).
 
 - **Body:**
   ```json
   {
-    "userId": "abc123",                // ID del usuario (opcional si está en el JWT)
-    "audioId": "audio1",               // (opcional) ID del audio que está siendo reproducido
-    "position": 123,                     // Posición actual en segundos dentro del audio
-    "duration": 600,                     // Duración total del audio en segundos
-    "connectionType": "wifi",           // Tipo de conexión ("wifi", "cellular", "offline")
-    "buffering": false,                  // Si el usuario está experimentando buffering
-    "deviceInfo": {                      // Información opcional del dispositivo
+    "userId": "abc123",                // User ID (optional if present in JWT)
+    "audioId": "audio1",               // (optional) ID of the audio being played
+    "position": 123,                   // Current position in seconds within the audio
+    "duration": 600,                   // Total duration of the audio in seconds
+    "connectionType": "wifi",          // Connection type ("wifi", "cellular", "offline")
+    "buffering": false,                // Whether the user is experiencing buffering
+    "deviceInfo": {                    // Optional device information
       "deviceId": "device-123",
       "platform": "iOS",
       "osVersion": "17.5"
     },
-    "timestamp": "2025-08-10T12:35:00Z" // Marca de tiempo del heartbeat (ISO8601, opcional)
+    "timestamp": "2025-08-10T12:35:00Z" // Heartbeat timestamp (ISO8601, optional)
   }
   ```
 
@@ -1015,18 +1012,18 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
   }
   ```
 
-- **Notas:**
-  - El backend puede usar estos datos para actualizar el progreso de la sesión, detectar desconexiones, guardar el punto de reanudación y analizar problemas de red.
-  - Se recomienda enviar heartbeats cada 10-30 segundos durante la reproducción activa.
-  - Si el usuario pierde conexión, los heartbeats pueden almacenarse localmente y enviarse cuando se recupere la conectividad.
+- **Notes:**
+  - The backend can use this data to update session progress, detect disconnections, save resume points, and analyze network issues.
+  - It is recommended to send heartbeats every 10-30 seconds during active playback.
+  - If the user loses connection, heartbeats can be stored locally and sent when connectivity is restored.
 
-- **Errores:**
-  - 400: Body inválido o campos faltantes
-  - 401: No autenticado
-  - 404: Sesión no encontrada
-  - 500: Error interno
+- **Errors:**
+  - 400: Invalid body or missing fields
+  - 401: Not authenticated
+  - 404: Session not found
+  - 500: Internal error
 
-- **Ejemplo Curl:**
+- **Curl Example:**
   ```sh
   curl -X POST "http://localhost:8080/v1/sessions/session123/heartbeat" \
     -H "Authorization: Bearer <TU_TOKEN_JWT>" \
@@ -1049,7 +1046,7 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
 
 
 ### POST /v1/sessions/{sessionId}/download
-- **Descripción:** Solicita al servidor una URL firmada para descargar el audio de la sesión y usarlo offline. El backend valida el plan del usuario y los límites diarios de descargas permitidas.
+- **Description:** Requests a signed URL from the server to download the session audio for offline use. The backend validates the user's plan and daily download limits.
 - **Auth:** Bearer server JWT
 - **Body:**
   ```json
@@ -1065,22 +1062,22 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
     "expiresAt": "2025-08-10T23:59:59Z"
   }
   ```
-- **Notas:**
-  - La URL firmada permite descargar el archivo de audio o imagen específico (`audioId`) directamente desde Cloudflare R2 por tiempo limitado.
-  - El backend registra la descarga para controlar límites diarios y uso por dispositivo.
-  - Si el usuario supera el límite de descargas, se retorna error 403.
-  - Es obligatorio enviar el `audioId` en el body para obtener la URL firmada del recurso correspondiente a la sesión.
-  - El parámetro `type` permite especificar si se desea descargar el audio (`type: "audio"`) o la imagen (`type: "image"`).
+- **Notes:**
+  - The signed URL allows downloading the specific audio or image file (`audioId`) directly from Cloudflare R2 for a limited time.
+  - The backend logs the download to enforce daily limits and track usage per device.
+  - If the user exceeds the download limit, a 403 error is returned.
+  - You must include `audioId` in the request body to obtain the signed URL for the corresponding session resource.
+  - The `type` parameter specifies whether you want to download the audio (`type: "audio"`) or the image (`type: "image"`).
 
-- **Errores:**
-  - 400: Datos faltantes (userId, deviceId, audioId)
-  - 403: Límite de descargas alcanzado o plan insuficiente
-  - 404: Sesión o audio no encontrado
-  - 500: Error interno
+- **Errors:**
+  - 400: Missing data (userId, deviceId, audioId)
+  - 403: Download limit reached or insufficient plan
+  - 404: Session or audio not found
+  - 500: Internal error
 
-- **Ejemplo Curl:**
+- **Curl Example:**
   ```sh
-  # Descargar audio
+  # Download audio
   curl -X POST "http://localhost:8080/v1/sessions/session123/download" \
     -H "Authorization: Bearer <TU_TOKEN_JWT>" \
     -H "Content-Type: application/json" \
@@ -1091,7 +1088,7 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
       "type": "audio"
     }'
 
-  # Descargar imagen asociada a audio
+    # Download image associated with audio
   curl -X POST "http://localhost:8080/v1/sessions/session123/download" \
     -H "Authorization: Bearer <TU_TOKEN_JWT>" \
     -H "Content-Type: application/json" \
@@ -1101,8 +1098,7 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
       "audioId": "CqJDS3QHrpWnmR15T9sv",
       "type": "image"
     }'
-
-  # Descargar imagen de portada de sesión
+    # Download session cover image
   curl -X POST "http://localhost:8080/v1/sessions/session123/download" \
     -H "Authorization: Bearer <TU_TOKEN_JWT>" \
     -H "Content-Type: application/json" \
@@ -1112,7 +1108,7 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
       "type": "image"
     }'
 
-  # Descargar imagen asociada a audio
+  # Download image associated with audio
   curl -X POST "http://localhost:8080/v1/sessions/session123/download" \
     -H "Authorization: Bearer <TU_TOKEN_JWT>" \
     -H "Content-Type: application/json" \
@@ -1124,14 +1120,12 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
     }'
   ```
 
-----Falta desde aqui
+### GET /v1/users/{userId}/downloads  
+**Description:** Lists all sessions and audios downloaded by the user. Returns information about each download, including session, audio, type, and date.
 
-### GET /v1/users/{userId}/downloads  ✅ *Nuevo*
-**Description:** Lista todas las sesiones y audios descargados por el usuario. Devuelve información sobre cada descarga, incluyendo sesión, audio, tipo y fecha.
-
-- **Auth:** Bearer server JWT (rol: user)
+- **Auth:** Bearer server JWT (role: user)
 - **Path Params:**
-  - `userId`: ID del usuario
+  - `userId`: User ID
 
 - **Response:**
 ```json
@@ -1153,52 +1147,48 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
   ]
 }
 ```
-
 - **Errors:**
-  - 400: Falta userId
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 500: Error interno al consultar descargas
+  - 400: Missing userId
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 500: Internal error retrieving downloads
 
 - **Curl Example:**
 ```sh
 curl -X GET "http://localhost:8080/v1/users/abc123/downloads" \
   -H "Authorization: Bearer <TU_TOKEN_JWT>"
 ```
+- **Extended details:**
+  - The endpoint queries the `downloads` subcollection in Firestore under the user's document (`users/{userId}/downloads`).
+  - Each document represents a download made by the user, either audio or image.
+  - Fields include session identifier (`sessionId`), audio identifier (`audioId`, optional), title, download date (`downloadedAt`, ISO8601 format), and type (`audio` or `image`).
+  - The backend validates the JWT and user flags before returning the information. If the user is banned, it returns 403.
+  - The endpoint is protected and only accessible to authenticated users with the `user` role.
 
-- **Detalle extendido:**
-  - El endpoint consulta la subcolección `downloads` en Firestore bajo el documento del usuario (`users/{userId}/downloads`).
-  - Cada documento representa una descarga realizada por el usuario, ya sea de audio o imagen.
-  - Los campos incluyen el identificador de sesión (`sessionId`), identificador de audio (`audioId`, opcional), título, fecha de descarga (`downloadedAt`, formato ISO8601) y tipo (`audio` o `image`).
-  - El backend valida el JWT y los flags del usuario antes de retornar la información. Si el usuario está baneado, retorna 403.
-  - El endpoint está protegido y solo accesible para usuarios autenticados con rol `user`.
+### DELETE /v1/users/{userId}/downloads/{sessionId}/{audioId}  ✅ *New*
+**Description:** Deletes the download record of a specific audio for the user, allowing them to download it again.
 
----
-
-### DELETE /v1/users/{userId}/downloads/{sessionId}/{audioId}  ✅ *Nuevo*
-**Description:** Elimina el registro de descarga de un audio específico para el usuario, permitiendo que pueda volver a descargarlo.
-
-- **Auth:** Bearer server JWT (rol: user)
+- **Auth:** Bearer server JWT (role: user)
 - **Path Params:**
-  - `userId`: ID del usuario
-  - `sessionId`: ID de la sesión
-  - `audioId`: ID del audio
+  - `userId`: User ID
+  - `sessionId`: Session ID
+  - `audioId`: Audio ID
 
 - **Response:**
 ```json
 {
-  "message": "Descarga eliminada",
+  "message": "Download deleted",
   "sessionId": "session123",
   "audioId": "audio456"
 }
 ```
 
 - **Errors:**
-  - 400: Falta userId, sessionId o audioId
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 404: Descarga no encontrada
-  - 500: Error interno al eliminar la descarga
+  - 400: Missing userId, sessionId, or audioId
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 404: Download not found
+  - 500: Internal error deleting download
 
 - **Curl Example:**
 ```sh
@@ -1206,11 +1196,11 @@ curl -X DELETE "http://localhost:8080/v1/users/abc123/downloads/session123/audio
   -H "Authorization: Bearer <TU_TOKEN_JWT>"
 ```
 
-- **Notas:**
-  - El endpoint elimina el documento correspondiente en la subcolección `downloads` bajo el usuario en Firestore.
-  - Si la descarga no existe, retorna 404.
-  - Tras eliminar, el usuario puede volver a descargar el audio usando el endpoint de descarga.
-**Description:** Lista todas las sesiones y audios descargados por el usuario. Devuelve información sobre cada descarga, incluyendo sesión, audio, tipo y fecha.
+- **Notes:**
+  - The endpoint deletes the corresponding document in the `downloads` subcollection under the user in Firestore.
+  - If the download does not exist, it returns 404.
+  - After deletion, the user can download the audio again using the download endpoint.
+**Description:** Lists all sessions and audios downloaded by the user. Returns information about each download, including session, audio, type, and date.
 
 - **Auth:** Bearer server JWT (rol: user)
 - **Path Params:**
@@ -1249,28 +1239,28 @@ curl -X GET "http://localhost:8080/v1/users/abc123/downloads" \
   -H "Authorization: Bearer <TU_TOKEN_JWT>"
 ```
 
-- **Detalle extendido:**
-  - El endpoint consulta la subcolección `downloads` en Firestore bajo el documento del usuario (`users/{userId}/downloads`).
-  - Cada documento representa una descarga realizada por el usuario, ya sea de audio o imagen.
-  - Los campos incluyen el identificador de sesión (`sessionId`), identificador de audio (`audioId`, opcional), título, fecha de descarga (`downloadedAt`, formato ISO8601) y tipo (`audio` o `image`).
-  - El backend valida el JWT y los flags del usuario antes de retornar la información. Si el usuario está baneado, retorna 403.
-  - El endpoint está protegido y solo accesible para usuarios autenticados con rol `user`.
+- **Extended details:**
+  - The endpoint queries the `downloads` subcollection in Firestore under the user's document (`users/{userId}/downloads`).
+  - Each document represents a download made by the user, either audio or image.
+  - Fields include session identifier (`sessionId`), audio identifier (`audioId`, optional), title, download date (`downloadedAt`, ISO8601 format), and type (`audio` or `image`).
+  - The backend validates the JWT and user flags before returning the information. If the user is banned, it returns 403.
+  - The endpoint is protected and only accessible to authenticated users with the `user` role.
 ---
 
 
 ## Library & Search
 ### GET /v1/library/search
-**Description:** Realiza búsqueda full-text y filtrada sobre las sesiones disponibles en la librería. Permite buscar por título, categoría, etiquetas, nivel, fecha de lanzamiento y si la sesión es Pro. Devuelve resultados paginados.
-**Auth:** Bearer server JWT (requerido, rol: user o admin)
+**Description:** Performs full-text and filtered search over available sessions in the library. Allows searching by title, category, tags, level, release date, and Pro status. Returns paginated results.
+**Auth:** Bearer server JWT (required, role: user or admin)
 **Query Params:**
-  - `q`: string. Texto para búsqueda en el título de la sesión (full-text, case-insensitive).
-  - `category`: string. Filtra por categoría (ej: "relax", "focus").
-  - `tags`: string. Lista de etiquetas separadas por coma (ej: "sueño,calma").
-  - `level`: string. Nivel de dificultad (ej: "beginner", "intermediate", "advanced").
-  - `releaseDate`: string. Fecha de lanzamiento (YYYY-MM-DD).
-  - `isPro`: boolean. Filtra por sesiones Pro (true/false).
-  - `page`: integer. Página de resultados (default: 1).
-  - `pageSize`: integer. Cantidad de resultados por página (default: 20).
+  - `q`: string. Text for searching session titles (full-text, case-insensitive).
+  - `category`: string. Filter by category (e.g., "relax", "focus").
+  - `tags`: string. Comma-separated list of tags (e.g., "sleep,calm").
+  - `level`: string. Difficulty level (e.g., "beginner", "intermediate", "advanced").
+  - `releaseDate`: string. Release date (YYYY-MM-DD).
+  - `isPro`: boolean. Filter by Pro sessions (true/false).
+  - `page`: integer. Results page (default: 1).
+  - `pageSize`: integer. Number of results per page (default: 20).
 
 **Request Example:**
 ```sh
@@ -1298,25 +1288,24 @@ curl -X GET "http://localhost:8080/v1/library/search?q=relajación&category=rela
   ]
 }
 ```
-
 **Errors:**
-  - 400: Parámetros inválidos
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 500: Error interno al buscar sesiones
+  - 400: Invalid parameters
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 500: Internal error searching sessions
 
-**Detalle extendido:**
-  - El endpoint realiza búsqueda y filtrado sobre la colección `sessions` en Firestore.
-  - Permite combinar búsqueda por texto y filtros avanzados.
-  - Los resultados se devuelven paginados según los parámetros `page` y `pageSize`.
-  - El backend valida el JWT en cada request y solo permite el acceso a usuarios autenticados (rol: user o admin).
-  - Si el usuario está baneado, retorna 403.
-  - Útil para construir el buscador principal de la app y mostrar resultados personalizados.
-  - **Nota:** Este endpoint no está disponible para usuarios no autenticados; la app requiere login para acceder a la búsqueda.
+**Extended details:**
+  - The endpoint performs search and filtering over the `sessions` collection in Firestore.
+  - Supports combining text search and advanced filters.
+  - Results are returned paginated according to the `page` and `pageSize` parameters.
+  - The backend validates the JWT on each request and only allows access to authenticated users (role: user or admin).
+  - If the user is banned, returns 403.
+  - Useful for building the app's main search and displaying personalized results.
+  - **Note:** This endpoint is not available for unauthenticated users; the app requires login to access search.
 
 ### POST /v1/library/categories
-**Description:**: Crea una nueva categoría en la librería.
-- **Auth:** Bearer JWT (usuario autenticado)
+**Description:** Creates a new category in the library.
+- **Auth:** Bearer JWT (authenticated user)
 - **Body:**
 ```json
 {
@@ -1330,12 +1319,11 @@ curl -X GET "http://localhost:8080/v1/library/search?q=relajación&category=rela
   "name": "relax"
 }
 ```
-
-- **Errores:**
-  - 400: Nombre de categoría requerido
-  - 401: Token de autenticación requerido
-  - 409: La categoría ya existe
-  - 500: Error de conexión o creación
+- **Errors:**
+  - 400: Category name required
+  - 401: Authentication token required
+  - 409: Category already exists
+  - 500: Connection or creation error
 
 **Request Example:**
 ```sh
@@ -1347,8 +1335,8 @@ curl -X POST "http://localhost:8080/v1/library/categories" \
 
 
 ### GET /v1/library/categories
-**Description:**  Lista todas las categorías y el conteo de sesiones por cada una.
-- **Auth:** Bearer JWT (usuario autenticado)
+**Description:** Lists all categories and the number of sessions in each.
+- **Auth:** Bearer JWT (authenticated user)
 - **Response:**
 ```json
 {
@@ -1357,10 +1345,10 @@ curl -X POST "http://localhost:8080/v1/library/categories" \
     { "name": "focus", "sessionCount": 3 }
   ]
 }
-```	
-- **Errores:**
-  - 401: Token de autenticación requerido
-  - 500: Error de conexión o consulta
+```
+- **Errors:**
+  - 401: Authentication token required
+  - 500: Connection or query error
 
 **Request Example:**
 ```sh
@@ -1371,26 +1359,26 @@ curl -X GET "http://localhost:8080/v1/library/categories" \
 
 
 ### POST /v1/users/{userId}/onboarding  
-**Description:** Registrar las respuestas iniciales del usuario cuando instala la app por primera vez y completa el flujo de onboarding.
+**Description:** Register the user's initial answers when installing the app for the first time and completing the onboarding flow.
 **Auth:** Bearer server JWT
 **Body:**
 ```json
 {
-  "goals": ["sleep", "focus"],        // Objetivos principales (mejorar sueño, concentración, etc.)
-  "experienceLevel": "beginner"       // Nivel de experiencia con meditación/hipnosis (beginner, intermediate, advanced)
+  "goals": ["sleep", "focus"],        // Main goals (improve sleep, focus, etc.)
+  "experienceLevel": "beginner"       // Experience level with meditation/hypnosis (beginner, intermediate, advanced)
 }
-```	
-**Response:**			
+```  
+**Response:**            
 ```json
 {
-    "message": "Onboarding guardado correctamente"
+    "message": "Onboarding saved successfully"
 }
-```			
-- **Errores:**
-  - 400: Body inválido o campos faltantes
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 500: Error interno al registrar onboarding
+```            
+- **Errors:**
+  - 400: Invalid body or missing fields
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 500: Internal error registering onboarding
 
 **Request Example:**
 ```sh
@@ -1400,25 +1388,25 @@ curl -X GET "http://localhost:8080/v1/library/categories" \
 
 # Favorites & Playlists (User Library)
 
-### POST /v1/users/{userId}/favorites/{sessionId} 
-**Description:** Agrega una sesión a favoritos para el usuario.
+### POST /v1/users/{userId}/favorites/{sessionId}
+**Description:** Adds a session to the user's favorites.
 - **Auth:** Bearer server JWT
 - **Path Params:**
-  - userId: ID del usuario
-  - sessionId: ID de la sesión
+  - userId: User ID
+  - sessionId: Session ID
 
-**Response:**			
+**Response:**
 ```json
 {
-  "message": "Sesión agregada a favoritos",
+  "message": "Session added to favorites",
   "sessionId": "session123"
 }
-```			
-- **Errores:**
-  - 400: Falta userId o sessionId
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 500: Error interno al agregar favorito
+```
+- **Errors:**
+  - 400: Missing userId or sessionId
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 500: Internal error adding favorite
 
 **Request Example:**
 ```sh
@@ -1427,27 +1415,31 @@ curl -X POST "http://localhost:8080/v1/users/abc123/favorites/session123" ^
 ```		
 
 ### DELETE /v1/users/{userId}/favorites/{sessionId}  
-**Description:** Elimina una sesión de la lista de favoritos del usuario.
+**Description:** Removes a session from the user's favorites list.
 - **Auth:** Bearer server JWT
 - **Path Params:**
-  - userId: ID del usuario
-  - sessionId: ID de la sesión
+  - userId: User ID
+  - sessionId: Session ID
 
 **Response:**			
 ```json
 {
-  "message": "Sesión eliminada de favoritos",
+  "message": "Session removed from favorites",
   "sessionId": "session123"
 }
 ```			
-- **Errores:**
-  - 400: Falta userId o sessionId
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 404: Favorito no encontrado
-  - 500: Error interno al eliminar favorito
+- **Errors:**
+  - 400: Missing userId or sessionId
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 404: Favorite not found
+  - 500: Internal error deleting favorite
 
 **Request Example:**
+```sh
+curl -X DELETE "http://localhost:8080/v1/users/abc123/favorites/session123" \
+  -H "Authorization: Bearer <SERVER_JWT>"
+```
 ```sh
 curl -X DELETE "http://localhost:8080/v1/users/abc123/favorites/session123" ^
   -H "Authorization: Bearer <SERVER_JWT>"
@@ -1455,10 +1447,10 @@ curl -X DELETE "http://localhost:8080/v1/users/abc123/favorites/session123" ^
 
 
 ### GET /v1/users/{userId}/favorites 
-**Description:** Lista sesiones favoritas del usuario.
-- **Auth:** Bearer server JWT (rol: user)
+**Description:** Lists the user's favorite sessions.
+- **Auth:** Bearer server JWT (role: user)
 - **Path Params:**
-  - userId: ID del usuario
+  - userId: User ID
 
 **Response:**			
 ```json
@@ -1466,21 +1458,21 @@ curl -X DELETE "http://localhost:8080/v1/users/abc123/favorites/session123" ^
   "favorites": [
     {
       "sessionId": "session123",
-      "title": "Relajación profunda",
+      "title": "Deep Relaxation",
       "category": "relax",
       "imageUrl": "https://r2.cdn/sessions/session123.jpg",
       "isPro": true,
       "addedAt": "2025-09-06T12:34:56Z"
     }
-    // ...otros favoritos...
+    // ...other favorites...
   ]
 }
 ```			
-- **Errores:**
-  - 400: Falta userId
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 500: Error interno al consultar favoritos
+- **Errors:**
+  - 400: Missing userId
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 500: Internal error retrieving favorites
 
 **Request Example:**
 ```sh
@@ -1494,46 +1486,46 @@ curl --location 'http://localhost:8080/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/fav
 
 ### POST /v1/receipt/verify
 
-**Description:** Verifica un recibo de compra de Google Play o App Store. El backend valida el recibo con la API correspondiente, actualiza el plan del usuario y registra la transacción.
-- **Auth:** Bearer server JWT (rol: user)
+**Description:** Verifies a purchase receipt from Google Play or App Store. The backend validates the receipt with the official API of each platform, updates the user's plan, and records the transaction.
+- **Auth:** Bearer server JWT (role: user)
 - **Body:**
  ```json
 {
   "userId": "abc123",
   "receipt": {
-    "source": "GooglePlay", // o "AppStore"
-    "data": "<recibo_base64>"
+    "source": "GooglePlay", // or "AppStore"
+    "data": "<base64_receipt>"
   }
 }
-```	
+```
 
 **Response:**			
 ```json
 {
-  "message": "Recibo verificado y plan actualizado",
+  "message": "Receipt verified and plan updated",
   "plan": "premium"
 }
-```			
+```
 
-**Description:** Verifica un recibo de compra de Google Play o App Store. El backend valida el recibo con la API oficial de cada plataforma, actualiza el plan del usuario y registra la transacción.
+**Description:** Verifies a purchase receipt from Google Play or App Store. The backend validates the receipt with the official API of each platform, updates the user's plan, and records the transaction.
 
-- **Control de transacciones:**
-Solo se permite una transacción activa por usuario.
-  - Si el usuario ya tiene una transacción activa y no ha expirado, se actualiza la expiración.
-  - Si la transacción activa ya expiró, se marca como expirada y se registra una nueva.
+- **Transaction control:**
+Only one active transaction per user is allowed.
+  - If the user already has an active transaction that has not expired, the expiration is updated.
+  - If the active transaction has expired, it is marked as expired and a new one is recorded.
 
-- **Campos actualizados en el usuario:**
+- **Fields updated in the user:**
   - plan, premium, planExpiration, planStatus, subscriptionSource, trial, trialDaysLeft, role
 
-- **Registro de transacciones:**
-  - Cada transacción almacena: source, receiptData, plan, purchaseDate, expirationDate, planStatus, createdAt
+- **Transaction record:**
+  - Each transaction stores: source, receiptData, plan, purchaseDate, expirationDate, planStatus, createdAt
 
-- **Auth:** Bearer server JWT (rol: user)
+- **Auth:** Bearer server JWT (role: user)
 - **Body:**
-  - Para Google Play:
-    - `data` debe ser un base64 de un JSON con los campos `packageName`, `productId`, `purchaseToken`.
-  - Para App Store:
-    - `data` es el recibo base64 entregado por Apple.
+  - For Google Play:
+    - `data` must be a base64-encoded JSON with the fields `packageName`, `productId`, `purchaseToken`.
+  - For App Store:
+    - `data` is the base64 receipt provided by Apple.
 
 ```json
 {
@@ -1557,17 +1549,17 @@ Solo se permite una transacción activa por usuario.
 **Response:**
 ```json
 {
-  "message": "Recibo verificado y plan actualizado",
+  "message": "Receipt verified and plan updated",
   "plan": "premium"
 }
 ```
-- **Errores:**
-  - 400: Body inválido o faltan campos
-  - 401: Recibo inválido o no verificado
-  - 403: Usuario baneado o sin permisos
-  - 500: Error al actualizar transacción
+- **Errors:**
+  - 400: Invalid body or missing fields
+  - 401: Invalid or unverified receipt
+  - 403: User banned or lacks permissions
+  - 500: Error updating transaction
 
-**Ejemplo curl (Google Play):**
+**Curl Example (Google Play):**
 ```sh
 curl -X POST "http://localhost:8080/v1/receipt/verify" \
   -H "Authorization: Bearer <SERVER_JWT>" \
@@ -1581,7 +1573,7 @@ curl -X POST "http://localhost:8080/v1/receipt/verify" \
   }'
 ```
 
-**Ejemplo curl (App Store):**
+**Example curl (App Store):**
 ```sh
 curl -X POST "http://localhost:8080/v1/receipt/verify" \
   -H "Authorization: Bearer <SERVER_JWT>" \
@@ -1596,9 +1588,9 @@ curl -X POST "http://localhost:8080/v1/receipt/verify" \
 ```
 
 ### POST /v1/events/batch
-- **Description:** Este endpoint permite enviar un lote (batch) de eventos de usuario (por ejemplo: play, pause, etc.) para ser procesados de forma eficiente y almacenados en el backend. Es ideal para apps que generan muchos eventos en poco tiempo (alta frecuencia).
+- **Description:** This endpoint allows sending a batch of user events (e.g., play, pause, etc.) to be efficiently processed and stored in the backend. It is ideal for apps that generate many events in a short period (high frequency).
 
-- **Auth:** Bearer server JWT (rol: user)
+- **Auth:** Bearer server JWT (role: user)
 
 - **Body:**			
 ```json
@@ -1643,11 +1635,11 @@ curl -X POST "http://localhost:8080/v1/receipt/verify" \
   "count": 2
 }
 ```			
-- **Errores:**
-  - 400: Body inválido o faltan campos.
-  - 401: No autenticado
-  - 403: Usuario baneado o sin permisos
-  - 500: Error interno al consultar favoritos
+- **Errors:**
+  - 400: Invalid body or missing fields
+  - 401: Not authenticated
+  - 403: User banned or lacks permissions
+  - 500: Internal error retrieving favorites
 
 **Request Example:**
 ```sh
@@ -1691,11 +1683,11 @@ curl -X POST "http://localhost:8080/v1/events/batch" \
 ```	
 
 ----
-## Alerts & Reminders - Configuración avanzada
+## Alerts & Reminders - Advanced Configuration
 
 ### POST /v1/alerts
-**Description:** Crea o agenda una alerta o recordatorio para el usuario.
-- **Auth:** Bearer server JWT (rol: user)
+**Description:** Creates or schedules an alert or reminder for the user.
+- **Auth:** Bearer server JWT (role: user)
 - **Body:**
  ```json
 {
@@ -1734,27 +1726,28 @@ curl -X POST "http://localhost:8080/v1/alerts" \
 - **Description:** Trigger sending an alert now (admin or scheduled function).
 - **Auth:** Bearer server JWT (admin or system)
 - **Path Params:**
-  - alertId: ID de la alerta a enviar
+  - alertId: ID of the alert to send
 
-- **Query Params (opcional):**
-  - userId: ID del usuario (si la alerta está en la subcolección del usuario)
+- **Query Params (optional):**
+  - userId: User ID (if the alert is in the user's subcollection)
 
-**Response:**			
+**Response:**
 ```json
 { "message": "Alert sent", "alertId": "alert123" }
-```			
-- **Errores:**
+```
+- **Errors:**
   - 400: Missing alertId
   - 404: Alert not found
   - 500: Failed to update alert status
 
 **Request Example:**
-TODO: Este curl aun esta por definirse
+TODO: This curl is still to be defined
 ```sh
 curl -X POST "http://localhost:8080/v1/alerts/alert123/send" \
   -H "Authorization: Bearer <SERVER_JWT_ADMIN>"
 ```	
-(Si la alerta está bajo un usuario específico)
+
+(If the alert is under a specific user)
 	
 ```sh
 curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
@@ -1763,7 +1756,7 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
 ---
 
 ### POST /v1/alerts/reminder
-- **Descripción:** Configura la hora, frecuencia y días activos del recordatorio de meditación para el usuario. Guarda la configuración en Firestore bajo `users/{userId}/reminders/meditation`.
+- **Description:** Sets the time, frequency, and active days for the user's meditation reminder. Saves the configuration in Firestore under `users/{userId}/reminders/meditation`.
 - **Auth:** Bearer server JWT
 - **Body:**
   ```json
@@ -1778,14 +1771,14 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
   ```json
   { "message": "Reminder configuration saved" }
   ```
-- **Errores:**
-  - 400: Body inválido o campos obligatorios faltantes
-  - 500: Error guardando recordatorio en Firestore
-- **Detalle:**
-  - `reminderTime`: Hora en formato HH:mm (ejemplo: "21:00").
-  - `frequency`: Puede ser "daily" (todos los días), "weekdays" (lunes a viernes), o "custom" (días personalizados).
-  - `activeDays`: Array de días activos. Usar abreviaturas: "M" (lunes), "T" (martes), "W" (miércoles), "T" (jueves), "F" (viernes), "S" (sábado), "U" (domingo).
-  - La configuración se almacena en Firestore y puede ser consultada por la app para mostrar o modificar el recordatorio.
+- **Errors:**
+  - 400: Invalid body or missing required fields
+  - 500: Error saving reminder in Firestore
+- **Details:**
+  - `reminderTime`: Time in HH:mm format (example: "21:00").
+  - `frequency`: Can be "daily" (every day), "weekdays" (Monday to Friday), or "custom" (custom days).
+  - `activeDays`: Array of active days. Use abbreviations: "M" (Monday), "T" (Tuesday), "W" (Wednesday), "T" (Thursday), "F" (Friday), "S" (Saturday), "U" (Sunday).
+  - The configuration is stored in Firestore and can be queried by the app to display or modify the reminder.
 - **Curl Example:**
   ```bash
   curl -X POST "http://localhost:8080/v1/alerts/reminder" \
@@ -1800,7 +1793,7 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
   ```
 ---
 ### PATCH /v1/alerts/preferences
-- **Description:** Configura los toggles de cada tipo de notificación.
+- **Description:** Configures the toggles for each type of notification.
 - **Auth:** Bearer server JWT
 - **Body:**
 ```json
@@ -1830,7 +1823,7 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
 
 ---
 ### PATCH /v1/alerts/message-style
-- **Description:** Configura el estilo preferido para los mensajes personalizados para el usuario autenticado.
+- **Description:** Sets the preferred style for personalized messages for the authenticated user.
 - **Auth:** Bearer server JWT
 - **Body:**
 ```json
@@ -1855,23 +1848,23 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
   ```
 ---
 ### GET /v1/alerts/preview
-- **Description:** Obtiene la vista previa del mensaje personalizado para el usuario.
+- **Description:** Retrieves a preview of the personalized message for the user.
 - **Auth:** Bearer server JWT
 - **Headers:**
   - Authorization: Bearer <token>
-  - Accept-Language: es (opcional, valores: es, en, etc.)
+  - Accept-Language: en (optional, values: en, es, etc.)
 - **Query params:** 
   - `userId`
 - **Response:**
 ```json
 {
-    "preview": "¡Eres imparable! Tu sesión te espera a las 9:00 PM."
+    "preview": "You are unstoppable! Your session awaits you at 9:00 PM."
 }
 ```
-- **Errores:**
+- **Errors:**
   - 400: Missing userId query param
-  - 401: No autenticado
-  - 500: Error interno al consultar favoritos
+  - 401: Not authenticated
+  - 500: Internal error retrieving favorites
 
 
 - **Curl Example:**
@@ -1882,7 +1875,7 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
   ```
 ---
 ### GET /v1/alerts/upcoming
-- **Description:** Devuelve la lista de notificaciones programadas para los próximos días.
+- **Description:** Returns the list of scheduled notifications for the upcoming days.
 - **Auth:** Bearer server JWT
 - **Query params:** 
   - `userId`
@@ -1906,10 +1899,10 @@ curl -X POST "http://localhost:8080/v1/alerts/alert123/send?userId=abc123" \
 }
 ```
 
-- **Errores:**
-  - 400: Falta userId
-  - 401: No autenticado
-  - 500: Error interno al consultar favoritos
+- **Errors:**
+  - 400: Missing userId
+  - 401: Not authenticated
+  - 500: Internal error retrieving favorites
 
 **Request Example:**
 ```sh
@@ -1919,7 +1912,7 @@ curl -X GET "https://api.tuapp.com/v1/alerts/upcoming?userId=abc123" \
 
 ---
 ### PATCH /v1/alerts/advanced-options
-- **Description:** Configura las opciones de snooze y respeto a DND.
+- **Description:** Configures snooze options and Do Not Disturb (DND) respect.
 - **Auth:** Bearer server JWT
 - **Body:**
 ```json
@@ -1933,11 +1926,10 @@ curl -X GET "https://api.tuapp.com/v1/alerts/upcoming?userId=abc123" \
 ```json
 { "message": "Advanced options updated" }
 ```
-
-- **Errores:**
-  - 400: Falta userId o body inválido
-  - 401: No autenticado
-  - 500: Error interno al actualizar opciones
+- **Errors:**
+  - 400: Missing userId or invalid body
+  - 401: Not authenticated
+  - 500: Internal error updating options
 
 - **Request Example:**
 ```sh
@@ -1954,9 +1946,9 @@ curl --location --request PATCH 'http://localhost:8080/v1/alerts/advanced-option
 ---
 
 ### GET /v1/alerts/config
-- **Description:** Devuelve toda la configuración de alertas y recordatorios del usuario
+- **Description:** Returns all alert and reminder configuration for the user.
 - **Auth:** Bearer server JWT
-- **Query params:** 
+- **Query params:**
   - `userId`
 - **Response:**
 ```json
@@ -1972,10 +1964,10 @@ curl --location --request PATCH 'http://localhost:8080/v1/alerts/advanced-option
   "doNotDisturbRespect": true
 }
 ```
-- **Errores:**
-- 400: Falta userId
-- 401: No autenticado
-- 500: Error interno al consultar configuración
+- **Errors:**
+  - 400: Missing userId
+  - 401: Not authenticated
+  - 500: Internal error retrieving configuration
 
 **Request Example:**
 
@@ -1986,11 +1978,10 @@ curl --location 'http://localhost:8080/v1/alerts/config?userId=abc123' \
 
 ---
 
-
 ### PATCH /v1/alerts/config
-- **Description:** Actualiza la configuración de alertas y recordatorios del usuario.
-- **Auth:** Bearer server JWT (rol: user)
-- **Body Params:**: (puedes enviar solo los campos que deseas actualizar)
+- **Description:** Updates the user's alert and reminder configuration.
+- **Auth:** Bearer server JWT (role: user)
+- **Body Params:** (you can send only the fields you want to update)
 ```json
 {
     "userId": "edJpSZ76WPNHJ1rPoafv6rgYMKy2",
@@ -2009,14 +2000,14 @@ curl --location 'http://localhost:8080/v1/alerts/config?userId=abc123' \
 
 ```json
 {
-  "message": "Configuración de alertas actualizada"
+  "message": "Alert configuration updated"
 }
 ```
 
-- **Errores:**
-  - 400: Falta userId o body inválido
-  - 401: No autenticado
-  - 500: Error interno al actualizar configuración
+- **Errors:**
+  - 400: Missing userId or invalid body
+  - 401: Not authenticated
+  - 500: Internal error updating configuration
 
 - **Request Example:**
 
