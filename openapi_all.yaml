@@ -19,8 +19,43 @@ info:
       **Dynamic user flags:**
       In addition to validating the role in the token, the backend checks dynamic user flags in Firestore (premium, trial, banned, etc.) and exposes them in the request for additional logic in the handlers.
     servers:
-      - url: http://localhost:8080
+      - url: https://apphipno-staging-2e7c.up.railway.app - http://localhost:8080
 paths:
+  /v1/config/audio-activation-interval:
+    get:
+      tags:
+        - Admin
+      summary: Get audio activation configuration
+      description: |
+        Returns the public parameters for progressive audio activation:
+        - `intervalDays`: days between activations
+        - `maxActiveSessions`: maximum active sessions per user
+        Protected with session JWT.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current configuration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  intervalDays:
+                    type: integer
+                    example: 5
+                  maxActiveSessions:
+                    type: integer
+                    example: 3
+              examples:
+                example:
+                  value:
+                    intervalDays: 5
+                    maxActiveSessions: 3
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal error
   /v1/admin/config/audio-activation-interval:
     post:
       tags:
@@ -78,6 +113,41 @@ paths:
           description: Unauthorized (invalid JWT or no admin role)
         '500':
           description: Internal error or missing credentials
+  /v1/admin/config/audio-activation-interval/cache-stats:
+    get:
+      tags:
+        - Admin
+      summary: Obtiene métricas del caché del endpoint de configuración de activación de audios
+      description: |
+        Devuelve contadores de hits/misses y el momento de expiración del caché en memoria.
+        Solo accesible para administradores.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Métricas del caché
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hits:
+                    type: integer
+                    format: int64
+                  misses:
+                    type: integer
+                    format: int64
+                  expiresAt:
+                    type: string
+                    format: date-time
+                  secondsToExpire:
+                    type: integer
+                    description: Segundos restantes para expirar (clamp a 0 si ya expiró)
+                  isExpired:
+                    type: boolean
+                    description: Indica si el caché actual ya expiró
+        '401':
+          description: No autorizado
   /v1/admin/upload:
     post:
       tags:

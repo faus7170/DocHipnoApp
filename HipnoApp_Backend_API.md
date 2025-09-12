@@ -452,6 +452,119 @@ curl -X POST "http://localhost:8080/v1/auth/resend-code" \
 ## Admin / CMS Endpoints
 > **Role Note:** The endpoints in this section can only be accessed by users with the `admin` role (Bearer server JWT with `role: "admin"`). Regular users (`user` role) do not have access to these endpoints.
 
+#### POST /v1/admin/config/audio-activation-interval
+- **Description:** Updates the global configuration for progressive audio activation and the maximum number of active sessions allowed for enrollment.
+- **Auth:** Bearer server JWT (admin)
+- **Body:**
+  ```json
+  {
+    "intervalDays": 5,
+    "maxActiveSessions": 3
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "message": "Configuration updated",
+    "intervalDays": 5,
+    "maxActiveSessions": 3
+    }
+    ```
+  - **Errors:**
+    - 400: Invalid body or missing fields
+    - 401: Unauthorized (invalid JWT or missing admin role)
+    - 500: Internal error or missing credentials
+- **Curl Example:**
+  ```sh
+  curl -X POST "http://localhost:8080/v1/admin/config/audio-activation-interval" \
+    -H "Authorization: Bearer <SERVER_JWT_ADMIN>" \
+    -H "Content-Type: application/json" \
+    -d '{ "intervalDays": 5, "maxActiveSessions": 3 }'
+  ```
+  #### GET /v1/config/audio-activation-interval
+
+  - **Description:** Returns the public configuration for progressive audio activation in sessions.
+    - `intervalDays`: Number of days between audio activations.
+    - `maxActiveSessions`: Maximum number of active sessions a user can have at the same time.
+  - **Auth:** Bearer server JWT (user)
+  - **Response 200:**
+    ```json
+    {
+      "intervalDays": 5,
+      "maxActiveSessions": 3
+    }
+    ```
+  - **Errors:**
+    - 401: Unauthorized
+    - 500: Internal server error
+  - **cURL Examples:**
+    ```powershell
+    # Local
+    curl.exe -X GET "http://localhost:8080/v1/config/audio-activation-interval" -H "Authorization: Bearer <JWT>"
+
+    # With variables
+    $BASE="http://localhost:8080"; $JWT="<JWT>";
+    curl.exe -X GET "$BASE/v1/config/audio-activation-interval" -H "Authorization: Bearer $JWT";
+
+    # Staging (replace with your URL)
+    $BASE="https://apphipno-staging-XXXX.up.railway.app"; $JWT="<JWT>";
+    curl.exe -X GET "$BASE/v1/config/audio-activation-interval" -H "Authorization: Bearer $JWT";
+    ```
+
+  ---
+
+  #### GET /v1/admin/config/audio-activation-interval/cache-stats
+
+  - **Description:** Returns in-memory cache metrics for the audio activation configuration endpoint. Useful to verify TTL behavior and cache performance in staging/production.
+    - `hits`: Number of cache hits since process start.
+    - `misses`: Number of cache misses (first load or after expiration).
+    - `expiresAt`: RFC3339 timestamp when the current cached value expires.
+    - `secondsToExpire`: Seconds remaining until expiration. Clamped to 0 if already expired.
+    - `isExpired`: `true` if the cache is already expired at the moment of the request.
+    - `now`: Server time in RFC3339 for reference.
+  - **Auth:** Bearer server JWT (admin)
+  - **Response 200:**
+    ```json
+    {
+      "hits": 3,
+      "misses": 1,
+      "expiresAt": "2025-09-11T22:56:20-05:00",
+      "secondsToExpire": 7,
+      "isExpired": false,
+      "now": "2025-09-11T22:56:13-05:00"
+    }
+    ```
+  - **When expired:**
+    ```json
+    {
+      "hits": 3,
+      "misses": 2,
+      "expiresAt": "2025-09-11T22:56:20-05:00",
+      "secondsToExpire": 0,
+      "isExpired": true,
+      "now": "2025-09-11T22:56:25-05:00"
+    }
+    ```
+  - **Notes:**
+    - Each process/instance maintains its own in-memory cache. Hits/misses are per-instance.
+    - TTL can be configured via env var `AUDIO_CONFIG_CACHE_TTL_SECONDS` (default 300 seconds).
+    - Optional debug logs via `AUDIO_CONFIG_CACHE_DEBUG=true`.
+    - Cache is invalidated automatically after `POST /v1/admin/config/audio-activation-interval`.
+  - **cURL Examples (PowerShell on Windows):**
+    ```powershell
+    # Local
+    curl.exe -X GET "http://localhost:8080/v1/admin/config/audio-activation-interval/cache-stats" -H "Authorization: Bearer <ADMIN_JWT>"
+
+    # With variables
+    $BASE="http://localhost:8080"; $ADMIN_JWT="<ADMIN_JWT>";
+    curl.exe -X GET "$BASE/v1/admin/config/audio-activation-interval/cache-stats" -H "Authorization: Bearer $ADMIN_JWT";
+
+    # Staging (replace with your URL)
+    $BASE="https://apphipno-staging-XXXX.up.railway.app"; $ADMIN_JWT="<ADMIN_JWT>";
+    curl.exe -X GET "$BASE/v1/admin/config/audio-activation-interval/cache-stats" -H "Authorization: Bearer $ADMIN_JWT";
+    ```
+---
+
 ### POST /v1/admin/assign-role
 - **Description:** Assigns the `admin` or `user` role to a user in Firebase Auth (only admins can use this endpoint).
 - **Auth:** Bearer server JWT (admin)
@@ -893,37 +1006,7 @@ curl -X GET "http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&
     -d '{ "userId": "abc123" }'
   ```
 ---
-
-#### POST /v1/admin/config/audio-activation-interval
-- **Description:** Updates the global configuration for progressive audio activation and the maximum number of active sessions allowed for enrollment.
-- **Auth:** Bearer server JWT (admin)
-- **Body:**
-  ```json
-  {
-    "intervalDays": 5,
-    "maxActiveSessions": 3
-  }
-  ```
-- **Response:**
-  ```json
-  {
-    "message": "Configuration updated",
-    "intervalDays": 5,
-    "maxActiveSessions": 3
-    }
-    ```
-  - **Errors:**
-    - 400: Invalid body or missing fields
-    - 401: Unauthorized (invalid JWT or missing admin role)
-    - 500: Internal error or missing credentials
-- **Curl Example:**
-  ```sh
-  curl -X POST "http://localhost:8080/v1/admin/config/audio-activation-interval" \
-    -H "Authorization: Bearer <SERVER_JWT_ADMIN>" \
-    -H "Content-Type: application/json" \
-    -d '{ "intervalDays": 5, "maxActiveSessions": 3 }'
-  ```
-  ### POST /v1/sessions/{sessionId}/start
+   ### POST /v1/sessions/{sessionId}/start
 
   - **Description:** Marks the start of a session for the user. Creates a preliminary entry in the session history (`sessions_history`) that records when the user started the session, from which device and location. This record is used to calculate total listening time, statistics, and achievements.
     - **Authentication:** Requires server JWT (Bearer).
