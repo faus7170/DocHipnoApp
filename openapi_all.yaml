@@ -18,8 +18,8 @@ info:
 
       **Dynamic user flags:**
       In addition to validating the role in the token, the backend checks dynamic user flags in Firestore (premium, trial, banned, etc.) and exposes them in the request for additional logic in the handlers.
-    servers:
-      - url: https://apphipno-staging-2e7c.up.railway.app - http://localhost:8080
+servers:
+    - url: https://apphipno-staging-2e7c.up.railway.app - http://localhost:8080
 paths:
   /v1/config/audio-activation-interval:
     get:
@@ -2181,6 +2181,64 @@ paths:
           description: Usuario baneado o sin permisos
         '500':
           description: Error interno al consultar favoritos
+  /v1/users/{userId}/subscription/verify:
+    post:
+      tags: [Subscriptions]
+      summary: Verificar suscripción del usuario
+      description: >
+        Verifica un recibo/compra con Google Play o Apple y actualiza el estado de suscripción del usuario
+        junto con el historial de transacciones.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string }
+          description: UID del usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [provider]
+              properties:
+                provider:
+                  type: string
+                  enum: [google, apple, mock]
+                packageName: { type: string, description: Solo para provider=google }
+                productId:   { type: string, description: Solo para provider=google }
+                purchaseToken: { type: string, description: Solo para provider=google }
+                receiptData: { type: string, description: Base64 del recibo de Apple; solo para provider=apple }
+            examples:
+              google:
+                value: { provider: google, packageName: com.tuapp.android, productId: premium_monthly, purchaseToken: TOKEN }
+              apple:
+                value: { provider: apple, receiptData: BASE64_APPLE }
+              mock:
+                value: { provider: mock, productId: premium_monthly }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  plan: { type: string }
+                  planStatus: { type: string, enum: [active, in_grace_period, canceled, expired] }
+                  subscriptionSource: { type: string, enum: [google, apple, mock] }
+                  subscriptionStartDate: { type: string, format: date-time }
+                  nextBillingDate: { type: string, format: date-time, nullable: true }
+                  cancelAtPeriodEnd: { type: boolean }
+                  isInGracePeriod: { type: boolean }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '403': { description: Forbidden }
+        '409': { description: Conflict }
+        '500': { description: Internal Server Error }
   /v1/receipt/verify:
     post:
       summary: Verifica un recibo de compra de Google Play o App Store.
@@ -2200,6 +2258,7 @@ paths:
 
         - Para Google Play: el campo `data` debe ser un base64 de un JSON con los campos `packageName`, `productId`, `purchaseToken`.
         - Para App Store: el campo `data` es el recibo base64 entregado por Apple.
+      deprecated: true
       tags:
         - Subscriptions
       security:
