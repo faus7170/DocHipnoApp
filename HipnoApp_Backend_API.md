@@ -1737,6 +1737,7 @@ Replaces POST /v1/receipt/verify
   - Trial flags are reset as appropriate (trial/trialDaysLeft)
 - Transaction record (user subcollection):
   - source, receiptData (when applicable), plan, purchaseDate, expirationDate, planStatus, nextBillingDate, cancelAtPeriodEnd, isInGracePeriod, createdAt, and provider-derived metadata.
+  
 - **Errors:**
   - 400: Invalid body or missing fields (e.g., missing packageName/productId/purchaseToken for provider=google)
   - 401: Unauthorized (invalid or missing JWT)
