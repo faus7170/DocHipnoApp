@@ -1567,7 +1567,11 @@ curl --location 'http://localhost:8080/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/fav
 
 ## Subscriptions & Transactions
 
+
 ### POST /v1/receipt/verify
+
+⚠️ **Deprecated**  
+Esta sección ya no debe usarse. Será eliminada en futuras versiones.
 
 **Description:** Verifies a purchase receipt from Google Play or App Store. The backend validates the receipt with the official API of each platform, updates the user's plan, and records the transaction.
 - **Auth:** Bearer server JWT (role: user)
@@ -1669,6 +1673,100 @@ curl -X POST "http://localhost:8080/v1/receipt/verify" \
     }
   }'
 ```
+### POST /v1/users/{userId}/subscription/verify
+Replaces POST /v1/receipt/verify
+
+
+**Description:** Verifies a subscription receipt/purchase with Google Play or App Store. The backend validates with the provider's official API, updates the user's subscription status, and records the transaction (latestTransaction). Additionally, it persists a snapshot of the subscription in the user's document.
+- **Auth:** Authorization: Bearer <JWT> (role: user o admin)
+- **Params:**
+  - UserId (string, required): Target user's UID. Must match the authenticated user, except for admin role.
+- **Body:**
+ ```json
+ //Example body (Google)
+{
+  "provider": "google",
+  "packageName": "com.tuapp.android",
+  "productId": "premium_monthly",
+  "purchaseToken": "TOKEN_DE_GOOGLE"
+}
+ //Example body (Apple)
+{
+  "provider": "apple",
+  "receiptData": "BASE64_DEL_RECIBO_DE_APPLE"
+}
+
+ //Example body  (Mock)
+{
+  "provider": "mock",
+  "productId": "premium_monthly"
+}
+
+```
+
+**Response:**			
+```json
+{
+  "message": "Subscription verified and updated",
+  "plan": "premium_monthly",
+  "planStatus": "active",
+  "subscriptionSource": "google",
+  "subscriptionStartDate": "2025-09-10T15:30:00Z",
+  "nextBillingDate": "2025-10-10T15:30:00Z",
+  "cancelAtPeriodEnd": false,
+  "isInGracePeriod": false
+}
+```
+
+**Description:** Logic and persistence
+- Subscription/renewal control:
+  - Only one coherent active subscription is maintained per user.
+  - If there is an active, non-expired renewal, information and dates are updated.
+  - If expired, the status is reflected (expired/canceled) and a new transaction is recorded if applicable.
+- Fields updated in the user (snapshot):
+  - plan (string)
+  - premium (boolean)
+  - planExpiration (date-time)
+  - planStatus (active | in_grace_period | canceled | expired)
+  - subscriptionSource (google | apple | mock)
+  - subscriptionStartDate (date-time)
+  - nextBillingDate (date-time | null)
+  - cancelAtPeriodEnd (boolean)
+  - isInGracePeriod (boolean)
+  - latestTransaction (summary object)
+  - Trial flags are reset as appropriate (trial/trialDaysLeft)
+- Transaction record (user subcollection):
+  - source, receiptData (when applicable), plan, purchaseDate, expirationDate, planStatus, nextBillingDate, cancelAtPeriodEnd, isInGracePeriod, createdAt, and provider-derived metadata.
+- **Errors:**
+  - 400: Invalid body or missing fields (e.g., missing packageName/productId/purchaseToken for provider=google)
+  - 401: Unauthorized (invalid or missing JWT)
+  - 403: Forbidden (user banned or userId in path does not match JWT without admin role)
+  - 409: Conflict (inconsistent state reported by provider)
+  - 500: Internal Server Error (failure verifying with provider or persisting data)
+
+**Curl Example (Google Play):**
+```sh
+curl.exe -X POST "https://api.tu-dominio.com/v1/users/USER_ID/subscription/verify" `
+  -H "Authorization: Bearer YOUR_JWT" `
+  -H "Content-Type: application/json" `
+  --data-raw "{\"provider\":\"google\",\"packageName\":\"com.tuapp.android\",\"productId\":\"premium_monthly\",\"purchaseToken\":\"TOKEN_DE_GOOGLE\"}"
+```
+
+**Example curl (App Store):**
+```sh
+curl.exe -X POST "https://api.tu-dominio.com/v1/users/USER_ID/subscription/verify" `
+  -H "Authorization: Bearer YOUR_JWT" `
+  -H "Content-Type: application/json" `
+  --data-raw "{\"provider\":\"apple\",\"receiptData\":\"BASE64_DEL_RECIBO_DE_APPLE\"}"
+```
+**Example curl (App Store):**
+```sh
+curl.exe -X POST "http://localhost:8080/v1/users/USER_ID/subscription/verify" `
+  -H "Authorization: Bearer YOUR_JWT" `
+  -H "Content-Type: application/json" `
+  --data-raw "{\"provider\":\"mock\",\"productId\":\"premium_monthly\"}"
+```
+
 
 ### POST /v1/events/batch
 - **Description:** This endpoint allows sending a batch of user events (e.g., play, pause, etc.) to be efficiently processed and stored in the backend. It is ideal for apps that generate many events in a short period (high frequency).
