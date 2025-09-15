@@ -1737,7 +1737,7 @@ Replaces POST /v1/receipt/verify
   - Trial flags are reset as appropriate (trial/trialDaysLeft)
 - Transaction record (user subcollection):
   - source, receiptData (when applicable), plan, purchaseDate, expirationDate, planStatus, nextBillingDate, cancelAtPeriodEnd, isInGracePeriod, createdAt, and provider-derived metadata.
-  
+
 - **Errors:**
   - 400: Invalid body or missing fields (e.g., missing packageName/productId/purchaseToken for provider=google)
   - 401: Unauthorized (invalid or missing JWT)
@@ -1766,6 +1766,52 @@ curl.exe -X POST "http://localhost:8080/v1/users/USER_ID/subscription/verify" `
   -H "Authorization: Bearer YOUR_JWT" `
   -H "Content-Type: application/json" `
   --data-raw "{\"provider\":\"mock\",\"productId\":\"premium_monthly\"}"
+```
+
+## GET /v1/users/{userId}/subscription
+
+**Description:** 
+Returns the consolidated subscription snapshot for the given user.
+
+- **Auth:**  Authorization: Bearer <JWT> (role: user or admin)
+- **Path params:**
+	- userId (string, required): Target user's UID. Must match the authenticated user unless admin.
+
+**Response (200)**
+```json
+{
+	"plan": "premium_monthly",
+	"planStatus": "active",
+	"subscriptionSource": "google",
+	"subscriptionStartDate": "2025-09-10T15:30:00Z",
+	"nextBillingDate": "2025-10-10T15:30:00Z",
+	"cancelAtPeriodEnd": false,
+	"isInGracePeriod": false,
+	"latestTransaction": {
+		"plan": "premium_monthly",
+		"planStatus": "active",
+		"purchaseDate": "2025-09-10T15:30:00Z",
+		"expirationDate": "2025-10-10T15:30:00Z",
+		"source": "google"
+	}
+}
+```
+
+**Notes**
+- If nextBillingDate is not available, the backend may return planExpiration in its place.
+- latestTransaction is a summary object and may vary slightly depending on the provider.
+
+**Errors**
+- 400: Missing userId in path.
+- 401: Unauthorized (invalid/missing JWT).
+- 403: Forbidden (user banned or path userId does not match JWT without admin role).
+- 404: User not found.
+- 500: Internal Server Error.
+
+**Curl example (PowerShell)**
+```powershell
+curl.exe -X GET "https://api.your-domain.com/v1/users/USER_ID/subscription" `
+	-H "Authorization: Bearer YOUR_JWT"
 ```
 
 

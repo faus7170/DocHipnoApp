@@ -2184,10 +2184,23 @@ paths:
   /v1/users/{userId}/subscription/verify:
     post:
       tags: [Subscriptions]
-      summary: Verificar suscripción del usuario
-      description: >
-        Verifica un recibo/compra con Google Play o Apple y actualiza el estado de suscripción del usuario
-        junto con el historial de transacciones.
+      summary: Verifies a purchase receipt from Google Play or App Store.
+      description: |
+        Verifies a purchase receipt from Google Play or App Store. The backend validates the receipt with the official API of each platform, updates the user's plan, and records the transaction.
+
+        **Transaction control:**
+        - Only one active transaction per user is allowed.
+        - If the user already has an active transaction and it has not expired, the expiration is updated.
+        - If the active transaction has expired, it is marked as expired and a new one is recorded.
+
+        **Fields updated in the user:**
+        - plan, premium, planExpiration, planStatus, subscriptionSource, trial, trialDaysLeft, role
+
+        **Transaction record:**
+        - Each transaction stores: source, receiptData, plan, purchaseDate, expirationDate, planStatus, createdAt
+
+        - For Google Play: the `data` field must be a base64-encoded JSON with the fields `packageName`, `productId`, `purchaseToken`.
+        - For App Store: the `data` field is the base64 receipt provided by Apple.
       security:
         - bearerAuth: []
       parameters:
@@ -2195,7 +2208,7 @@ paths:
           name: userId
           required: true
           schema: { type: string }
-          description: UID del usuario
+          description: UID user
       requestBody:
         required: true
         content:
@@ -2205,12 +2218,12 @@ paths:
               required: [provider]
               properties:
                 provider:
-                  type: string
-                  enum: [google, apple, mock]
-                packageName: { type: string, description: Solo para provider=google }
-                productId:   { type: string, description: Solo para provider=google }
-                purchaseToken: { type: string, description: Solo para provider=google }
-                receiptData: { type: string, description: Base64 del recibo de Apple; solo para provider=apple }
+                       type: string
+                       enum: [google, apple, mock]
+                packageName: { type: string, description: Only for provider=google }
+                productId:   { type: string, description: Only for provider=google }
+                purchaseToken: { type: string, description: Only for provider=google }
+                receiptData: { type: string, description: Base64 Apple receipt; Only for provider=apple }
             examples:
               google:
                 value: { provider: google, packageName: com.tuapp.android, productId: premium_monthly, purchaseToken: TOKEN }
@@ -2374,6 +2387,77 @@ paths:
                   summary: Error al actualizar transacción
                   value:
                     error: Error al actualizar transacción
+  /v1/users/{userId}/subscription:
+    get:
+      tags: [Subscriptions]
+      summary: Get consolidated subscription
+      description: >
+        Returns the consolidated subscription snapshot for the user. If `nextBillingDate` is
+        not available, the backend may return `planExpiration` instead.
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema: { type: string }
+          description: Target user's UID. Must match the authenticated user unless admin.
+      responses:
+        "200":
+          description: Subscription snapshot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plan:
+                    type: string
+                  planStatus:
+                    type: string
+                  subscriptionSource:
+                    type: string
+                  subscriptionStartDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  nextBillingDate:
+                    type: string
+                    format: date-time
+                    nullable: true
+                  cancelAtPeriodEnd:
+                    type: boolean
+                  isInGracePeriod:
+                    type: boolean
+                  latestTransaction:
+                    type: object
+                    additionalProperties: true
+              examples:
+                example:
+                  value:
+                    plan: premium_monthly
+                    planStatus: active
+                    subscriptionSource: google
+                    subscriptionStartDate: 2025-09-10T15:30:00Z
+                    nextBillingDate: 2025-10-10T15:30:00Z
+                    cancelAtPeriodEnd: false
+                    isInGracePeriod: false
+                    latestTransaction:
+                      plan: premium_monthly
+                      planStatus: active
+                      purchaseDate: 2025-09-10T15:30:00Z
+                      expirationDate: 2025-10-10T15:30:00Z
+                      source: google
+        "400": { description: Missing userId in path }
+        "401": { description: Unauthorized }
+        "403": { description: Forbidden }
+        "404": { description: User not found }
+        "500": { description: Internal server error }
+      x-codeSamples:
+        - lang: cURL
+          label: Get subscription
+          source: |
+            curl -X GET "https://api.your-domain.com/v1/users/USER_ID/subscription" \
+              -H "Authorization: Bearer YOUR_JWT"
   /v1/events/batch:
     post:
       tags:
