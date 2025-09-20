@@ -446,8 +446,201 @@ curl -X POST "http://localhost:8080/v1/auth/resend-code" \
   -H "Content-Type: application/json" \
   -d '{ "email": "usuario@email.com" }'
 ```	
+
+---
+# Endpoint: Change Password
+
+**Path:**
+```
+POST /v1/users/{userId}/change-password
+```
+
+**Description:**
+Allows users authenticated via email/password (Firebase Auth) to change their password. Not available for users registered with Google/Apple.
+
+## Request
+
+**Headers:**
+- Authorization: Bearer <JWT token>
+- Content-Type: application/json
+
+**Body:**
+```json
+{
+  "oldPassword": "string",      // (optional, validated in frontend)
+  "newPassword": "string",
+  "confirmPassword": "string"
+}
+```
+
+## Response
+
+**200 OK**
+```json
+{
+  "message": "Password changed successfully"
+}
+```
+
+**400 Bad Request**
+- Missing required fields
+- Passwords do not match
+- Unsupported user (Google/Apple)
+```json
+{
+  "error": "Passwords do not match"
+}
+```
+
+**401 Unauthorized**
+- Invalid or missing token
+
+**404 Not Found**
+- User not found
+
+**500 Internal Server Error**
+- Unexpected error changing password
+
+## CURL Example
+
+```bash
+curl -X POST "https://api.yourdomain.com/v1/users/USER_ID/change-password" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "oldPassword": "myOldPassword",
+    "newPassword": "myNewSecurePassword",
+    "confirmPassword": "myNewSecurePassword"
+  }'
+```
+
+## Notes
+- The current password is not validated in the backend due to Firebase limitations; it must be validated in the frontend.
+- Only users with the "password" provider can change their password.
+- Google/Apple users must manage their password with their external provider.
+- The endpoint requires a valid JWT authentication.
+
+---
+# Endpoint: Deactivate User
+
+**Path:**
+```
+PATCH /v1/users/{userId}/deactivate
+```
+
+**Description:**
+Disables the user in Firebase Auth and marks the user as inactive in Firestore (if applicable). This does not delete user data, but prevents login and usage until reactivated.
+
+## Request
+
+**Headers:**
+- Authorization: Bearer <JWT token>
+- Content-Type: application/json
+
+**Body:**
+No body required.
+
+## Response
+
+**200 OK**
+```json
+{
+  "message": "User deactivated successfully"
+}
+```
+
+**400 Bad Request**
+- Missing userId
+```json
+{
+  "error": "Missing userId"
+}
+```
+
+**401 Unauthorized**
+- Invalid or missing token
+
+**404 Not Found**
+- User not found
+
+**500 Internal Server Error**
+- Error disabling user in Firebase Auth
+
+## CURL Example
+
+```bash
+curl -X PATCH "https://api.yourdomain.com/v1/users/USER_ID/deactivate" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+## Notes
+- The user is disabled in Firebase Auth (`disabled: true`).
+- Optionally, the user profile in Firestore can be updated with `active: false`.
+- No user data is deleted; account can be reactivated if needed.
+- Endpoint requires valid JWT authentication.
 ---
 
+
+# Endpoint: Reactivate User
+
+**Path:**
+```
+PATCH /v1/users/{userId}/reactivate
+```
+
+**Description:**
+Enables the user in Firebase Auth and marks the user as active in Firestore (if applicable). This allows the user to log in and use the app again.
+
+## Request
+
+**Headers:**
+- Authorization: Bearer <JWT token>
+- Content-Type: application/json
+
+**Body:**
+No body required.
+
+## Response
+
+**200 OK**
+```json
+{
+  "message": "User reactivated successfully"
+}
+```
+
+**400 Bad Request**
+- Missing userId
+```json
+{
+  "error": "Missing userId"
+}
+```
+
+**401 Unauthorized**
+- Invalid or missing token
+
+**404 Not Found**
+- User not found
+
+**500 Internal Server Error**
+- Error enabling user in Firebase Auth
+
+## CURL Example
+
+```bash
+curl -X PATCH "https://api.yourdomain.com/v1/users/USER_ID/reactivate" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Content-Type: application/json"
+```
+
+**Notes:**
+- The user is enabled in Firebase Auth (`disabled: false`).
+- Optionally, the user profile in Firestore can be updated with `active: true`.
+- Endpoint requires valid JWT authentication.
+
+---
 
 ## Admin / CMS Endpoints
 > **Role Note:** The endpoints in this section can only be accessed by users with the `admin` role (Bearer server JWT with `role: "admin"`). Regular users (`user` role) do not have access to these endpoints.
