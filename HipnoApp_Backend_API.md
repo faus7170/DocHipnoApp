@@ -19,6 +19,7 @@ if flags["banned"] == true {
 ---
 
 ## Authentication & Session
+![Login Flow Diagram](./auth_flow_diagram.png)
 
 ## Google/Apple Social Login Flow
 
