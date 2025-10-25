@@ -19,6 +19,201 @@ if flags["banned"] == true {
 ---
 
 ## Authentication & Session
+
+## Google/Apple Social Login Flow
+
+To use social login (Google or Apple) with your backend endpoint `/v1/auth/social-login`, you must first obtain a valid ID token from the respective provider. This token is then sent to your backend for authentication and user creation.
+
+### Google Login (OAuth 2.0)
+
+1. **Obtain an ID Token:**
+   - You can use the [Google OAuth 2.0 Playground](https://developers.google.com/oauthplayground/) to manually obtain an ID token for testing.
+   - Steps:
+     1. Go to [Google OAuth 2.0 Playground](https://developers.google.com/oauthplayground/)
+     2. Select the scopes you need (e.g., `email`, `openid`, `https://www.googleapis.com/auth/userinfo.email`).
+     3. Authorize and exchange the code for tokens.
+     4. Copy the `id_token` from the response.
+   - This `id_token` is a JWT and can be used as the `token` parameter in your `/v1/auth/social-login` endpoint.
+
+2. **Send the token to your backend:**
+   - Example request:
+     ```json
+     {
+       "provider": "google",
+       "token": "<GOOGLE_ID_TOKEN>"
+     }
+     ```
+   - POST this JSON to `/v1/auth/social-login`.
+
+**Important:**
+- The process of obtaining the Google or Apple ID token must be implemented in your frontend (web or mobile app) source code.
+- Use the appropriate SDK (Firebase Auth, Google Sign-In, or Apple Sign-In) to handle the authentication flow and retrieve the `id_token` after the user logs in.
+- Once you have the `id_token` in your frontend, send it to your backend `/v1/auth/social-login` endpoint as described above.
+- Manual testing with OAuth playgrounds is only for development and debugging; in production, always obtain the token programmatically in your frontend code.
+
+**Description:**
+- The Google OAuth Playground allows you to simulate the OAuth flow, obtain an ID token, and test your backend integration without needing a frontend implementation.
+- For production, your frontend or mobile app should use Firebase Auth or Google Sign-In SDK to obtain the ID token automatically after user login.
+
+### Apple Login (OAuth 2.0)
+
+To test Apple social login and obtain an ID token for your `/v1/auth/social-login` endpoint, you must use the official Apple OAuth 2.0 flow for user authentication and enrollment.
+
+- Reference: [Apple OAuth2 Authentication & User Enrollment Flow](https://developer.apple.com/documentation/devicemanagement/implementing-the-oauth2-authentication-user-enrollment-flow)
+
+**Steps:**
+1. Follow the Apple documentation to implement the OAuth2 authentication flow.
+2. After successful authentication, you will receive an `id_token` (JWT) from Apple.
+3. Send this `id_token` to your backend endpoint as follows:
+   ```json
+   {
+     "provider": "apple",
+     "token": "<APPLE_ID_TOKEN>"
+   }
+   ```
+   POST this JSON to `/v1/auth/social-login`.
+
+**Note:**
+- For production, use the Apple Sign-In SDK or Firebase Auth with Apple provider to obtain the token programmatically in your app.
+- The Apple OAuth2 flow is more complex than Google's and requires proper configuration in your Apple Developer account.
+
+---
+
+**Summary:**
+- Use the Google OAuth Playground for manual testing of Google social login.
+- Always send the obtained `id_token` to your backend `/v1/auth/social-login` endpoint for authentication and user creation.
+- In production, use the appropriate SDKs to obtain the token programmatically.
+
+
+# Firebase Auth REST API Documentation
+
+---
+
+### POST /firebase/auth/signInWithPassword
+
+**Summary:** Authenticate with email and password (Firebase Auth)
+
+**Description:**  
+Authenticates a user using email and password via the Firebase Authentication REST API.  
+This endpoint corresponds to the `accounts:signInWithPassword` operation in Firebase.  
+Returns a Firebase ID token (`idToken`), a refresh token (`refreshToken`), and authenticated user data.  
+**Note:** This endpoint is external to your backend and requires the Firebase API Key.
+
+**Tags:** Firebase Auth
+
+**Request Body:**
+```json
+{
+  "email": "fausto.laminia@gmail.com",
+  "password": "PruebaApp.25",
+  "returnSecureToken": true
+}
+```
+- `email` (string, required): User's email registered in Firebase.
+- `password` (string, required): User's password.
+- `returnSecureToken` (boolean, required): If true, Firebase returns a session token and refresh token.
+
+**Responses:**
+
+- **200 OK**  
+  User authenticated successfully. Returns tokens and user data.
+  ```json
+  {
+    "kind": "identitytoolkit#VerifyPasswordResponse",
+    "localId": "USER_UID",
+    "email": "fausto.laminia@gmail.com",
+    "displayName": "User Name",
+    "idToken": "FIREBASE_ID_TOKEN",
+    "registered": true,
+    "refreshToken": "FIREBASE_REFRESH_TOKEN",
+    "expiresIn": "3600"
+  }
+  ```
+
+- **400 Bad Request**  
+  Authentication error (invalid credentials or user does not exist).
+  ```json
+  {
+    "error": {
+      "code": 400,
+      "message": "EMAIL_NOT_FOUND",
+      "errors": [
+        {
+          "message": "EMAIL_NOT_FOUND",
+          "domain": "global",
+          "reason": "invalid"
+        }
+      ]
+    }
+  }
+  ```
+
+**External Docs:**  
+[Official Firebase Auth REST API documentation](https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password)
+
+---
+
+### POST /firebase/auth/signUp
+
+**Summary:** Register a new user with email and password (Firebase Auth)
+
+**Description:**  
+Registers a new user using email and password via the Firebase Authentication REST API.  
+This endpoint corresponds to the `accounts:signUp` operation in Firebase.  
+Returns a Firebase ID token (`idToken`), a refresh token (`refreshToken`), and the new user's data.  
+**Note:** This endpoint is external to your backend and requires the Firebase API Key.
+
+**Tags:** Firebase Auth
+
+**Request Body:**
+```json
+{
+  "email": "newuser@email.com",
+  "password": "MySecurePassword123",
+  "returnSecureToken": true
+}
+```
+- `email` (string, required): Email to register in Firebase.
+- `password` (string, required): Password for the new user.
+- `returnSecureToken` (boolean, required): If true, Firebase returns a session token and refresh token.
+
+**Responses:**
+
+- **200 OK**  
+  User registered successfully. Returns tokens and user data.
+  ```json
+  {
+    "kind": "identitytoolkit#SignupNewUserResponse",
+    "idToken": "FIREBASE_ID_TOKEN",
+    "email": "newuser@email.com",
+    "refreshToken": "FIREBASE_REFRESH_TOKEN",
+    "expiresIn": "3600",
+    "localId": "USER_UID"
+  }
+  ```
+
+- **400 Bad Request**  
+  Registration error (email already exists, weak password, etc.).
+  ```json
+  {
+    "error": {
+      "code": 400,
+      "message": "EMAIL_EXISTS",
+      "errors": [
+        {
+          "message": "EMAIL_EXISTS",
+          "domain": "global",
+          "reason": "invalid"
+        }
+      ]
+    }
+  }
+  ```
+
+**External Docs:**  
+[Official Firebase Auth REST API documentation](https://firebase.google.com/docs/reference/rest/auth#section-sign-up)
+
+
 ### POST /v1/auth/login
 - **Description:** Login via email and password validates the Firebase token and registers or updates the user's profile in Firestore.
 Dynamic fields such as `premium`, `trial`, `trialEndsAt`, `banned`, and others are automatically initialized or updated based on backend logic (e.g., when activating a trial, registering a subscription, or applying a ban). The user cannot modify these flags directly.
@@ -446,201 +641,8 @@ curl -X POST "http://localhost:8080/v1/auth/resend-code" \
   -H "Content-Type: application/json" \
   -d '{ "email": "usuario@email.com" }'
 ```	
-
----
-# Endpoint: Change Password
-
-**Path:**
-```
-POST /v1/users/{userId}/change-password
-```
-
-**Description:**
-Allows users authenticated via email/password (Firebase Auth) to change their password. Not available for users registered with Google/Apple.
-
-## Request
-
-**Headers:**
-- Authorization: Bearer <JWT token>
-- Content-Type: application/json
-
-**Body:**
-```json
-{
-  "oldPassword": "string",      // (optional, validated in frontend)
-  "newPassword": "string",
-  "confirmPassword": "string"
-}
-```
-
-## Response
-
-**200 OK**
-```json
-{
-  "message": "Password changed successfully"
-}
-```
-
-**400 Bad Request**
-- Missing required fields
-- Passwords do not match
-- Unsupported user (Google/Apple)
-```json
-{
-  "error": "Passwords do not match"
-}
-```
-
-**401 Unauthorized**
-- Invalid or missing token
-
-**404 Not Found**
-- User not found
-
-**500 Internal Server Error**
-- Unexpected error changing password
-
-## CURL Example
-
-```bash
-curl -X POST "https://api.yourdomain.com/v1/users/USER_ID/change-password" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "oldPassword": "myOldPassword",
-    "newPassword": "myNewSecurePassword",
-    "confirmPassword": "myNewSecurePassword"
-  }'
-```
-
-## Notes
-- The current password is not validated in the backend due to Firebase limitations; it must be validated in the frontend.
-- Only users with the "password" provider can change their password.
-- Google/Apple users must manage their password with their external provider.
-- The endpoint requires a valid JWT authentication.
-
----
-# Endpoint: Deactivate User
-
-**Path:**
-```
-PATCH /v1/users/{userId}/deactivate
-```
-
-**Description:**
-Disables the user in Firebase Auth and marks the user as inactive in Firestore (if applicable). This does not delete user data, but prevents login and usage until reactivated.
-
-## Request
-
-**Headers:**
-- Authorization: Bearer <JWT token>
-- Content-Type: application/json
-
-**Body:**
-No body required.
-
-## Response
-
-**200 OK**
-```json
-{
-  "message": "User deactivated successfully"
-}
-```
-
-**400 Bad Request**
-- Missing userId
-```json
-{
-  "error": "Missing userId"
-}
-```
-
-**401 Unauthorized**
-- Invalid or missing token
-
-**404 Not Found**
-- User not found
-
-**500 Internal Server Error**
-- Error disabling user in Firebase Auth
-
-## CURL Example
-
-```bash
-curl -X PATCH "https://api.yourdomain.com/v1/users/USER_ID/deactivate" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json"
-```
-
-## Notes
-- The user is disabled in Firebase Auth (`disabled: true`).
-- Optionally, the user profile in Firestore can be updated with `active: false`.
-- No user data is deleted; account can be reactivated if needed.
-- Endpoint requires valid JWT authentication.
 ---
 
-
-# Endpoint: Reactivate User
-
-**Path:**
-```
-PATCH /v1/users/{userId}/reactivate
-```
-
-**Description:**
-Enables the user in Firebase Auth and marks the user as active in Firestore (if applicable). This allows the user to log in and use the app again.
-
-## Request
-
-**Headers:**
-- Authorization: Bearer <JWT token>
-- Content-Type: application/json
-
-**Body:**
-No body required.
-
-## Response
-
-**200 OK**
-```json
-{
-  "message": "User reactivated successfully"
-}
-```
-
-**400 Bad Request**
-- Missing userId
-```json
-{
-  "error": "Missing userId"
-}
-```
-
-**401 Unauthorized**
-- Invalid or missing token
-
-**404 Not Found**
-- User not found
-
-**500 Internal Server Error**
-- Error enabling user in Firebase Auth
-
-## CURL Example
-
-```bash
-curl -X PATCH "https://api.yourdomain.com/v1/users/USER_ID/reactivate" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json"
-```
-
-**Notes:**
-- The user is enabled in Firebase Auth (`disabled: false`).
-- Optionally, the user profile in Firestore can be updated with `active: true`.
-- Endpoint requires valid JWT authentication.
-
----
 
 ## Admin / CMS Endpoints
 > **Role Note:** The endpoints in this section can only be accessed by users with the `admin` role (Bearer server JWT with `role: "admin"`). Regular users (`user` role) do not have access to these endpoints.
@@ -1760,11 +1762,7 @@ curl --location 'http://localhost:8080/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/fav
 
 ## Subscriptions & Transactions
 
-
 ### POST /v1/receipt/verify
-
-⚠️ **Deprecated**  
-Esta sección ya no debe usarse. Será eliminada en futuras versiones.
 
 **Description:** Verifies a purchase receipt from Google Play or App Store. The backend validates the receipt with the official API of each platform, updates the user's plan, and records the transaction.
 - **Auth:** Bearer server JWT (role: user)
@@ -1866,147 +1864,6 @@ curl -X POST "http://localhost:8080/v1/receipt/verify" \
     }
   }'
 ```
-### POST /v1/users/{userId}/subscription/verify
-Replaces POST /v1/receipt/verify
-
-
-**Description:** Verifies a subscription receipt/purchase with Google Play or App Store. The backend validates with the provider's official API, updates the user's subscription status, and records the transaction (latestTransaction). Additionally, it persists a snapshot of the subscription in the user's document.
-- **Auth:** Authorization: Bearer <JWT> (role: user o admin)
-- **Params:**
-  - UserId (string, required): Target user's UID. Must match the authenticated user, except for admin role.
-- **Body:**
- ```json
- //Example body (Google)
-{
-  "provider": "google",
-  "packageName": "com.tuapp.android",
-  "productId": "premium_monthly",
-  "purchaseToken": "TOKEN_DE_GOOGLE"
-}
- //Example body (Apple)
-{
-  "provider": "apple",
-  "receiptData": "BASE64_DEL_RECIBO_DE_APPLE"
-}
-
- //Example body  (Mock)
-{
-  "provider": "mock",
-  "productId": "premium_monthly"
-}
-
-```
-
-**Response:**			
-```json
-{
-  "message": "Subscription verified and updated",
-  "plan": "premium_monthly",
-  "planStatus": "active",
-  "subscriptionSource": "google",
-  "subscriptionStartDate": "2025-09-10T15:30:00Z",
-  "nextBillingDate": "2025-10-10T15:30:00Z",
-  "cancelAtPeriodEnd": false,
-  "isInGracePeriod": false
-}
-```
-
-**Description:** Logic and persistence
-- Subscription/renewal control:
-  - Only one coherent active subscription is maintained per user.
-  - If there is an active, non-expired renewal, information and dates are updated.
-  - If expired, the status is reflected (expired/canceled) and a new transaction is recorded if applicable.
-- Fields updated in the user (snapshot):
-  - plan (string)
-  - premium (boolean)
-  - planExpiration (date-time)
-  - planStatus (active | in_grace_period | canceled | expired)
-  - subscriptionSource (google | apple | mock)
-  - subscriptionStartDate (date-time)
-  - nextBillingDate (date-time | null)
-  - cancelAtPeriodEnd (boolean)
-  - isInGracePeriod (boolean)
-  - latestTransaction (summary object)
-  - Trial flags are reset as appropriate (trial/trialDaysLeft)
-- Transaction record (user subcollection):
-  - source, receiptData (when applicable), plan, purchaseDate, expirationDate, planStatus, nextBillingDate, cancelAtPeriodEnd, isInGracePeriod, createdAt, and provider-derived metadata.
-
-- **Errors:**
-  - 400: Invalid body or missing fields (e.g., missing packageName/productId/purchaseToken for provider=google)
-  - 401: Unauthorized (invalid or missing JWT)
-  - 403: Forbidden (user banned or userId in path does not match JWT without admin role)
-  - 409: Conflict (inconsistent state reported by provider)
-  - 500: Internal Server Error (failure verifying with provider or persisting data)
-
-**Curl Example (Google Play):**
-```sh
-curl.exe -X POST "https://api.tu-dominio.com/v1/users/USER_ID/subscription/verify" `
-  -H "Authorization: Bearer YOUR_JWT" `
-  -H "Content-Type: application/json" `
-  --data-raw "{\"provider\":\"google\",\"packageName\":\"com.tuapp.android\",\"productId\":\"premium_monthly\",\"purchaseToken\":\"TOKEN_DE_GOOGLE\"}"
-```
-
-**Example curl (App Store):**
-```sh
-curl.exe -X POST "https://api.tu-dominio.com/v1/users/USER_ID/subscription/verify" `
-  -H "Authorization: Bearer YOUR_JWT" `
-  -H "Content-Type: application/json" `
-  --data-raw "{\"provider\":\"apple\",\"receiptData\":\"BASE64_DEL_RECIBO_DE_APPLE\"}"
-```
-**Example curl (App Store):**
-```sh
-curl.exe -X POST "http://localhost:8080/v1/users/USER_ID/subscription/verify" `
-  -H "Authorization: Bearer YOUR_JWT" `
-  -H "Content-Type: application/json" `
-  --data-raw "{\"provider\":\"mock\",\"productId\":\"premium_monthly\"}"
-```
-
-## GET /v1/users/{userId}/subscription
-
-**Description:** 
-Returns the consolidated subscription snapshot for the given user.
-
-- **Auth:**  Authorization: Bearer <JWT> (role: user or admin)
-- **Path params:**
-	- userId (string, required): Target user's UID. Must match the authenticated user unless admin.
-
-**Response (200)**
-```json
-{
-	"plan": "premium_monthly",
-	"planStatus": "active",
-	"subscriptionSource": "google",
-	"subscriptionStartDate": "2025-09-10T15:30:00Z",
-	"nextBillingDate": "2025-10-10T15:30:00Z",
-	"cancelAtPeriodEnd": false,
-	"isInGracePeriod": false,
-	"latestTransaction": {
-		"plan": "premium_monthly",
-		"planStatus": "active",
-		"purchaseDate": "2025-09-10T15:30:00Z",
-		"expirationDate": "2025-10-10T15:30:00Z",
-		"source": "google"
-	}
-}
-```
-
-**Notes**
-- If nextBillingDate is not available, the backend may return planExpiration in its place.
-- latestTransaction is a summary object and may vary slightly depending on the provider.
-
-**Errors**
-- 400: Missing userId in path.
-- 401: Unauthorized (invalid/missing JWT).
-- 403: Forbidden (user banned or path userId does not match JWT without admin role).
-- 404: User not found.
-- 500: Internal Server Error.
-
-**Curl example (PowerShell)**
-```powershell
-curl.exe -X GET "https://api.your-domain.com/v1/users/USER_ID/subscription" `
-	-H "Authorization: Bearer YOUR_JWT"
-```
-
 
 ### POST /v1/events/batch
 - **Description:** This endpoint allows sending a batch of user events (e.g., play, pause, etc.) to be efficiently processed and stored in the backend. It is ideal for apps that generate many events in a short period (high frequency).
