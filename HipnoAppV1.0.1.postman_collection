@@ -1,0 +1,2862 @@
+{
+	"info": {
+		"_postman_id": "c1843004-19e8-49d1-b01b-36162129d3b3",
+		"name": "HipnoAppV1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17225632",
+		"_collection_link": "https://martian-escape-815716.postman.co/workspace/hipnoApp~8b8ec3b7-68a0-4d8c-a01b-74fbffb4ca37/collection/17225632-c1843004-19e8-49d1-b01b-36162129d3b3?action=share&source=collection_link&creator=17225632"
+	},
+	"item": [
+		{
+			"name": "v1/protected",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY4NzE2NzYsImlhdCI6MTc1Njc4NTI3Niwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.hJbp8I4HzchLFflmGSWtoA0jj-CU5qHt_3hIOjU2zPA"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/protected",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"protected"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET http://localhost:8080/v1/protected \\\n  -H \"Authorization: Bearer <JWT_DE_SESION>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/auth/signout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImU4MWYwNTJhZWYwNDBhOTdjMzlkMjY1MzgxZGU2Y2I0MzRiYzM1ZjMiLCJ0eXAiOiJKV1QifQ.eyJyb2xlIjoiYWRtaW4iLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZGV2YXBwLTZkZDE1IiwiYXVkIjoiZGV2YXBwLTZkZDE1IiwiYXV0aF90aW1lIjoxNzU5MTk3Nzc0LCJ1c2VyX2lkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiIsInN1YiI6ImVkSnBTWjc2V1BOSEoxclBvYWZ2NnJnWU1LeTIiLCJpYXQiOjE3NTkxOTc3NzQsImV4cCI6MTc1OTIwMTM3NCwiZW1haWwiOiJmYXVzdG8ubGFtaW5pYUBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiZmF1c3RvLmxhbWluaWFAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.Sfd-qDeyafzKqu_BVwJlikcdZgTg-kI0nomQGuZsumV7ZQpdPO6dN5a7giZJCfY5DlX88zVAef0MwKwaQHmvtFxRcTk8Nwhz15JUUuxFCCQ0N6wlpxsP-PkNzEM5EfaSfsf1IAgm9JUIL9eRl3toBy_ymgkBvGIvW9F3Tr--vxlmcsAxiQWoJ0FA9PQ083sd58quyy7kOifgWTo1b0lho0JzK5eYHVPzKpS1AhhRARnKZRO8apbzWFm0A8aHpleQiZYd6pcerqAoECZsqzM706IsBYcR6VF99ySNWb8-rIxMri_8lwlvx8GBa4NDMuz8Qb7x3A3z-eLjcyILaSKXXA"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/auth/signout",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"auth",
+						"signout"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST http://localhost:8080/v1/auth/signout \\\n  -H \"Authorization: Bearer <JWT_DE_SESION>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/{userId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc4MTY5MjUsImlhdCI6MTc1NzczMDUyNSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.ctm6DgNNz2k56gdXCdBjGGAZ-3csD4ksuNHPKD0q_xE"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"ZooCaNaIkQQR4FVG5Ywyb81F9ww1"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET http://localhost:8080/v1/users/{userId} \\\n  -H \"Authorization: Bearer <JWT_DE_SESION>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/{userId}",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczODEyNjQsImlhdCI6MTc1NzI5NDg2NCwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.UwB723NMd4pQQ5Rq5VPzVtY1sC7Er2jcDZ-DqQPFNT4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"UID\": \"ZooCaNaIkQQR4FVG5Ywyb81F9ww1\",\n        \"Email\": \"tourogabi@gmail.com\",\n        \"DisplayName\": \"Gaby molina\",\n        \"Gender\": \"male\",\n        \"BirthDate\": \"2020-01-01T00:00:00Z\",\n        \"Age\": 30,\n        \"Language\": \"es\",\n        \"Country\": \"CO\",\n        \"Role\": \"\",\n        \"Plan\": \"free\",\n        \"PlanStatus\": \"active\",\n        \"PlanExpiration\": \"2025-12-31T23:59:59Z\",\n        \"Premium\": false,\n        \"Trial\": true,\n        \"TrialEndsAt\": \"2025-09-15T01:52:28.705391Z\",\n        \"Banned\": false,\n        \"trialDaysLeft\": 7,\n        \"SubscriptionSource\": \"GooglePlay\",\n        \"CreatedAt\": \"2025-09-08T01:52:28.705391Z\",\n        \"UpdatedAt\": \"2025-09-08T01:53:11.127021Z\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"ZooCaNaIkQQR4FVG5Ywyb81F9ww1"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH http://localhost:8080/v1/users/{userId} \\\n  -H \"Authorization: Bearer <JWT_DE_SESION>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"displayName\": \"Nuevo Nombre\",\n    \"language\": \"es\",\n    \"country\": \"CO\",\n    \"birthDate\": \"1990-01-01\",\n    \"gender\": \"male\"\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/abc123/downloads",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY4NjczODcsImlhdCI6MTc1Njc4MDk4Nywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.5-5938NUDuj7DzNOq2lurqqovi9JD-LSlBSdHjR3hRc"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/downloads",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"downloads"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/users/abc123/downloads\" \\\r\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/{userId}/device/unregister",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTU1NDc5NTQsImlhdCI6MTc1NTQ2MTU1NCwidWlkIjoidXNlcjEyMyJ9.gnpjStVzOJ1knzw1DIHa1pEKfwPTIut-yewh8rdtKYU"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"deviceId\": \"device-123\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/device/unregister",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"device",
+						"unregister"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"https://api.hipnoapp.example.com/v1/users/{userId}/device/unregister\" \\\n  -H \"Authorization: Bearer <SERVER_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"deviceId\": \"device-123\" }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/abc123/device/register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczMDAxMzEsImlhdCI6MTc1NzIxMzczMSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.PccuD430PXI6LK6xaeU3TdenIA4KgkBmcF2aepro_ZQ",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"deviceId\": \"device-345\",\n    \"platform\": \"Android\",\n    \"osVersion\": \"13.0\",\n    \"fcmToken\": \"fcm-test-token\",\n    \"location\": \"CDMX\",\n    \"country\": \"México\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/device/register",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"device",
+						"register"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/users/abc123/device/register\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"platform\": \"Android\",\n    \"osVersion\": \"13.0\",\n    \"fcmToken\": \"fcm-test-token\",\n    \"location\": \"CDMX\",\n    \"country\": \"México\"\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/abc123/onboarding",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyNjM4MzEsImlhdCI6MTc1NzE3NzQzMSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.huZD9nwH9u3rlW9hvg8UQyRLIq1SkbGz5nZREI1arYk"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"goal\": \"Heal relationships and work on the inner child\",\n    \"obstacle\": \"Constant self-sabotage or procrastination\",\n    \"frequency\": \"3–4 days\",\n    \"preferredTime\": \"In the morning, upon waking up\",\n    \"holdingBack\": \"I'm still unsure about the effectiveness\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/onboarding",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"onboarding"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/users/abc123/onboarding\" \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"goal\": \"Heal relationships and work on the inner child\",\n    \"obstacle\": \"Constant self-sabotage or procrastination\",\n    \"frequency\": \"3–4 days\",\n    \"preferredTime\": \"In the morning, upon waking up\",\n    \"holdingBack\": \"I'm still unsure about the effectiveness\"\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/{userId}/sessions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY2NzY5NDMsImlhdCI6MTc1NjU5MDU0Mywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.5PiDmX93zrgnYoYy6sWvbsJmdQlW2JxCh87YttfauPc"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/sessions",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"sessions"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/users/{userId}/sessions\" \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/sessions",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTgyNjA1ODQsImlhdCI6MTc1ODE3NDE4NCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.PWNCl_Ipkrv-ed42_PQmxlBm-hr0r-wky_PkFC87W0U"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Relajación profunda 4\",\r\n    \"category\": \"relax\",\r\n    \"duration\": 600,\r\n    \"isPro\": true,\r\n    \"tags\": [\"relax\", \"sleep\"],\r\n    \"level\": \"beginner\",\r\n    \"releaseDate\": \"2025-08-17\",\r\n    \"imageUrl\": \"https://r2.cdn/sessions/session123.jpg\",\r\n    \"description\": \"Sesión guiada para relajación profunda 4.\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/sessions",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"sessions"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/admin/sessions\" \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"title\": \"Relajación profunda\",\r\n    \"category\": \"relax\",\r\n    \"duration\": 600,\r\n    \"isPro\": true,\r\n    \"tags\": [\"relax\", \"sleep\"],\r\n    \"level\": \"beginner\",\r\n    \"releaseDate\": \"2025-08-17\",\r\n    \"audioUrl\": \"\",\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"Sesión guiada para relajación profunda.\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/abc123/downloads/session123/audio456",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY4NjczODcsImlhdCI6MTc1Njc4MDk4Nywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.5-5938NUDuj7DzNOq2lurqqovi9JD-LSlBSdHjR3hRc"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/downloads/rZ8id6DFPyYbEFDGPmuf/CqJDS3QHrpWnmR15T9sv",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"downloads",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"CqJDS3QHrpWnmR15T9sv"
+					]
+				},
+				"description": "Generated from cURL: curl -X DELETE \"http://localhost:8080/v1/users/abc123/downloads/session123/audio456\" \\\r\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/abc123/favorites/session123",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyNjM4MzEsImlhdCI6MTc1NzE3NzQzMSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.huZD9nwH9u3rlW9hvg8UQyRLIq1SkbGz5nZREI1arYk"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/favorites/rZ8id6DFPyYbEFDGPmuf",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"favorites",
+						"rZ8id6DFPyYbEFDGPmuf"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/users/abc123/favorites/session123\" ^\n  -H \"Authorization: Bearer <SERVER_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/abc123/favorites",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyNjM4MzEsImlhdCI6MTc1NzE3NzQzMSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.huZD9nwH9u3rlW9hvg8UQyRLIq1SkbGz5nZREI1arYk"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/favorites",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"favorites"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/users/abc123/favorites\" ^\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/abc123/favorites/session123",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyNjM4MzEsImlhdCI6MTc1NzE3NzQzMSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.huZD9nwH9u3rlW9hvg8UQyRLIq1SkbGz5nZREI1arYk"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/favorites/rZ8id6DFPyYbEFDGPmuf",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"favorites",
+						"rZ8id6DFPyYbEFDGPmuf"
+					]
+				},
+				"description": "Generated from cURL: curl -X DELETE \"http://localhost:8080/v1/users/abc123/favorites/session123\" \r\n  -H \"Authorization: Bearer <SERVER_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/sessions/session123/audios",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY2MTM2NTEsImlhdCI6MTc1NjUyNzI1MSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.urgOUUmICF1Ktyqt3VP-r8kvpkB_wABIg-rT_okgDqQ"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Amor 4\",\r\n    \"audioUrl\": \"https://r2.cdn/sessions/session123/audio1.mp3\",\r\n    \"imageUrl\": \"https://r2.cdn/sessions/session123/audio1.jpg\",\r\n    \"duration\": 300,\r\n    \"order\": 4,\r\n    \"description\": \"Audio introductorio nuevo 4.\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/sessions/rZ8id6DFPyYbEFDGPmuf/audios",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"audios"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/admin/sessions/session123/audios\" \\\r\n  -H \"Authorization: Bearer <SERVER_JWT_ADMIN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"title\": \"Intro\",\r\n    \"audioUrl\": \"https://r2.cdn/sessions/session123/audio1.mp3\",\r\n    \"imageUrl\": \"https://r2.cdn/sessions/session123/audio1.jpg\",\r\n    \"duration\": 300,\r\n    \"order\": 1,\r\n    \"description\": \"Audio introductorio.\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/sessions/{sessionId}",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTU1NjAxMTgsImlhdCI6MTc1NTQ3MzcxOCwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.0loRW_x5KBCsZaw8U6iQpO0RWInzgFRU3ywM2OQOKZI"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Nuevo título\",\r\n    \"category\": \"relax\",\r\n    \"duration\": 700,\r\n    \"isPro\": false,\r\n    \"tags\": [\"relax\", \"focus\"],\r\n    \"level\": \"intermediate\",\r\n    \"releaseDate\": \"2025-09-01\",\r\n    \"audioUrl\": \"\",\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"Sesión actualizada.\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/sessions/{sessionId}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"sessions",
+						"{sessionId}"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH \"http://localhost:8080/v1/admin/sessions/{sessionId}\" \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"title\": \"Nuevo título\",\r\n    \"category\": \"relax\",\r\n    \"duration\": 700,\r\n    \"isPro\": false,\r\n    \"tags\": [\"relax\", \"focus\"],\r\n    \"level\": \"intermediate\",\r\n    \"releaseDate\": \"2025-09-01\",\r\n    \"audioUrl\": \"\",\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"Sesión actualizada.\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/sessions/{sessionId}",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTYzNDcyOTIsImlhdCI6MTc1NjI2MDg5Miwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.DXq6cWDsfJVfhpMefrxTtxecB9MODX4GNThAp7PJhEs"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Audio 1\",\r\n    \"category\": \"relax\",\r\n    \"duration\": 700,\r\n    \"isPro\": false,\r\n    \"tags\": [\"relax\", \"focus\"],\r\n    \"level\": \"intermediate\",\r\n    \"releaseDate\": \"2025-09-01\",\r\n    \"audioUrl\": \"\",\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"Sesión actualizada.\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/sessions/{sessionId}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"sessions",
+						"{sessionId}"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH \"http://localhost:8080/v1/admin/sessions/{sessionId}\" \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"title\": \"Nuevo título\",\r\n    \"category\": \"relax\",\r\n    \"duration\": 700,\r\n    \"isPro\": false,\r\n    \"tags\": [\"relax\", \"focus\"],\r\n    \"level\": \"intermediate\",\r\n    \"releaseDate\": \"2025-09-01\",\r\n    \"audioUrl\": \"\",\r\n    \"imageUrl\": \"\",\r\n    \"description\": \"Sesión actualizada.\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/sessions/{sessionId}",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer <ADMIN_JWT>"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/sessions/{sessionId}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"sessions",
+						"{sessionId}"
+					]
+				},
+				"description": "Generated from cURL: curl -X DELETE \"http://localhost:8080/v1/admin/sessions/{sessionId}\" \\\r\n  -H \"Authorization: Bearer <ADMIN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/assign-role",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTkzNzkxNTIsImlhdCI6MTc1OTI5Mjc1Miwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.5TUVPM7jvp8oTaO2F6bG-lv2A4GAKkD2P0cHER3foJs"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"uid\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\", \"role\": \"admin\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/assign-role",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"assign-role"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/admin/assign-role\" \\\n  -H \"Authorization: Bearer <ID_TOKEN_ADMIN>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"uid\": \"UID_DEL_NUEVO_USUARIO\", \"role\": \"admin\" }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/upload",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY3ODA3MDAsImlhdCI6MTc1NjY5NDMwMCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.RncVcZ6nLDCRw2SrFxv3Kiu8vMv1Jj3m09gJ5ZzEsm0"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"sessionId\": \"rZ8id6DFPyYbEFDGPmuf\",\r\n    \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n    \"type\": \"audio\",\r\n    \"contentType\": \"audio/mpeg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/upload",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"upload"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/admin/upload\" \\\n  -H \"Authorization: Bearer <SERVER_JWT_ADMIN>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"sessionId\": \"session123\", \"audioId\": \"audio1\", \"contentType\": \"audio/mpeg\" }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/upload-imagCover",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY3NDk4NDgsImlhdCI6MTc1NjY2MzQ0OCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.kQkb06x3UAKTKEM82p85i-XTvrVY9BgxzdeoM9Etd0o"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"sessionId\": \"rZ8id6DFPyYbEFDGPmuf\",\r\n    \"type\": \"image\",\r\n    \"contentType\": \"image/jpeg\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/upload",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"upload"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/admin/upload\" \\\r\n  -H \"Authorization: Bearer <SERVER_JWT_ADMIN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"sessionId\": \"rZ8id6DFPyYbEFDGPmuf\",\r\n    \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n    \"type\": \"image\",\r\n    \"contentType\": \"image/jpeg\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/upload-imagAud",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczODEyNjQsImlhdCI6MTc1NzI5NDg2NCwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.UwB723NMd4pQQ5Rq5VPzVtY1sC7Er2jcDZ-DqQPFNT4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"sessionId\": \"rZ8id6DFPyYbEFDGPmuf\",\r\n    \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n    \"type\": \"image\",\r\n    \"contentType\": \"image/jpeg\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/upload",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"upload"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/admin/upload\" \\\r\n  -H \"Authorization: Bearer <SERVER_JWT_ADMIN>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"sessionId\": \"rZ8id6DFPyYbEFDGPmuf\",\r\n    \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n    \"type\": \"image\",\r\n    \"contentType\": \"image/jpeg\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "urlClodflare",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "audio/mpeg"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Users/faus_/Downloads/file_example_MP3_1MG.mp3"
+					}
+				},
+				"url": {
+					"raw": "https://clin.728ebab08a84d61b80c5478ab05b4168.r2.cloudflarestorage.com/sessions/rZ8id6DFPyYbEFDGPmuf/CqJDS3QHrpWnmR15T9sv.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=a72a788ebf7e8cc7fba4f14c35a9bf84%2F20250831%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250831T211613Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&x-id=PutObject&X-Amz-Signature=079d4236c77e8cdd8ae8a649599ab06490d4da16e4606f0204c913a849f847f1",
+					"protocol": "https",
+					"host": [
+						"clin",
+						"728ebab08a84d61b80c5478ab05b4168",
+						"r2",
+						"cloudflarestorage",
+						"com"
+					],
+					"path": [
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"CqJDS3QHrpWnmR15T9sv.mp3"
+					],
+					"query": [
+						{
+							"key": "X-Amz-Algorithm",
+							"value": "AWS4-HMAC-SHA256"
+						},
+						{
+							"key": "X-Amz-Credential",
+							"value": "a72a788ebf7e8cc7fba4f14c35a9bf84%2F20250831%2Fauto%2Fs3%2Faws4_request"
+						},
+						{
+							"key": "X-Amz-Date",
+							"value": "20250831T211613Z"
+						},
+						{
+							"key": "X-Amz-Expires",
+							"value": "900"
+						},
+						{
+							"key": "X-Amz-SignedHeaders",
+							"value": "host"
+						},
+						{
+							"key": "x-id",
+							"value": "PutObject"
+						},
+						{
+							"key": "X-Amz-Signature",
+							"value": "079d4236c77e8cdd8ae8a649599ab06490d4da16e4606f0204c913a849f847f1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X PUT \"<uploadUrl>\" \\\n  -H \"Content-Type: audio/mpeg\" \\\n  --data-binary \"@ruta/al/audio.mp3\""
+			},
+			"response": []
+		},
+		{
+			"name": "urlClodflare Copy",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "audio/mpeg"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Users/faus_/Downloads/file_example_MP3_1MG.mp3"
+					}
+				},
+				"url": {
+					"raw": "https://clin.728ebab08a84d61b80c5478ab05b4168.r2.cloudflarestorage.com/sessions/rZ8id6DFPyYbEFDGPmuf/CqJDS3QHrpWnmR15T9sv.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=a72a788ebf7e8cc7fba4f14c35a9bf84%2F20250831%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250831T211613Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&x-id=PutObject&X-Amz-Signature=079d4236c77e8cdd8ae8a649599ab06490d4da16e4606f0204c913a849f847f1",
+					"protocol": "https",
+					"host": [
+						"clin",
+						"728ebab08a84d61b80c5478ab05b4168",
+						"r2",
+						"cloudflarestorage",
+						"com"
+					],
+					"path": [
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"CqJDS3QHrpWnmR15T9sv.mp3"
+					],
+					"query": [
+						{
+							"key": "X-Amz-Algorithm",
+							"value": "AWS4-HMAC-SHA256"
+						},
+						{
+							"key": "X-Amz-Credential",
+							"value": "a72a788ebf7e8cc7fba4f14c35a9bf84%2F20250831%2Fauto%2Fs3%2Faws4_request"
+						},
+						{
+							"key": "X-Amz-Date",
+							"value": "20250831T211613Z"
+						},
+						{
+							"key": "X-Amz-Expires",
+							"value": "900"
+						},
+						{
+							"key": "X-Amz-SignedHeaders",
+							"value": "host"
+						},
+						{
+							"key": "x-id",
+							"value": "PutObject"
+						},
+						{
+							"key": "X-Amz-Signature",
+							"value": "079d4236c77e8cdd8ae8a649599ab06490d4da16e4606f0204c913a849f847f1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X PUT \"<uploadUrl>\" \\\n  -H \"Content-Type: audio/mpeg\" \\\n  --data-binary \"@ruta/al/audio.mp3\""
+			},
+			"response": []
+		},
+		{
+			"name": "urlClodflare-image",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "image/jpeg"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Users/faus_/Downloads/WhatsApp Unknown 2025-08-07 at 1.37.46 PM/WhatsApp Image 2025-08-07 at 8.54.16 AM (2).jpeg"
+					}
+				},
+				"url": {
+					"raw": "https://clin.728ebab08a84d61b80c5478ab05b4168.r2.cloudflarestorage.com/sessions/rZ8id6DFPyYbEFDGPmuf/img/cover.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=a72a788ebf7e8cc7fba4f14c35a9bf84%2F20250831%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250831T212630Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&x-id=PutObject&X-Amz-Signature=ea08fde495b6300e5036f0d46c89d0e39b94faf0073dde2d40f887f8c6ab5ece",
+					"protocol": "https",
+					"host": [
+						"clin",
+						"728ebab08a84d61b80c5478ab05b4168",
+						"r2",
+						"cloudflarestorage",
+						"com"
+					],
+					"path": [
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"img",
+						"cover.jpg"
+					],
+					"query": [
+						{
+							"key": "X-Amz-Algorithm",
+							"value": "AWS4-HMAC-SHA256"
+						},
+						{
+							"key": "X-Amz-Credential",
+							"value": "a72a788ebf7e8cc7fba4f14c35a9bf84%2F20250831%2Fauto%2Fs3%2Faws4_request"
+						},
+						{
+							"key": "X-Amz-Date",
+							"value": "20250831T212630Z"
+						},
+						{
+							"key": "X-Amz-Expires",
+							"value": "900"
+						},
+						{
+							"key": "X-Amz-SignedHeaders",
+							"value": "host"
+						},
+						{
+							"key": "x-id",
+							"value": "PutObject"
+						},
+						{
+							"key": "X-Amz-Signature",
+							"value": "ea08fde495b6300e5036f0d46c89d0e39b94faf0073dde2d40f887f8c6ab5ece"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X PUT \"<uploadUrl>\" \\\n  -H \"Content-Type: audio/mpeg\" \\\n  --data-binary \"@ruta/al/audio.mp3\""
+			},
+			"response": []
+		},
+		{
+			"name": "urlClodflare-profile",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "image/jpeg"
+					}
+				],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": "/C:/Users/faus_/Downloads/WhatsApp Unknown 2025-08-07 at 1.37.46 PM/WhatsApp Image 2025-08-07 at 8.54.16 AM.jpeg"
+					}
+				},
+				"url": {
+					"raw": "https://clin.728ebab08a84d61b80c5478ab05b4168.r2.cloudflarestorage.com/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=a72a788ebf7e8cc7fba4f14c35a9bf84%2F20250908%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20250908T025231Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&x-id=PutObject&X-Amz-Signature=e389bfe5e0cf5b05f814446771a70a2a819a5c3998ab85883ad85bc2342e998c",
+					"protocol": "https",
+					"host": [
+						"clin",
+						"728ebab08a84d61b80c5478ab05b4168",
+						"r2",
+						"cloudflarestorage",
+						"com"
+					],
+					"path": [
+						"users",
+						"ZooCaNaIkQQR4FVG5Ywyb81F9ww1",
+						"profile.jpg"
+					],
+					"query": [
+						{
+							"key": "X-Amz-Algorithm",
+							"value": "AWS4-HMAC-SHA256"
+						},
+						{
+							"key": "X-Amz-Credential",
+							"value": "a72a788ebf7e8cc7fba4f14c35a9bf84%2F20250908%2Fauto%2Fs3%2Faws4_request"
+						},
+						{
+							"key": "X-Amz-Date",
+							"value": "20250908T025231Z"
+						},
+						{
+							"key": "X-Amz-Expires",
+							"value": "900"
+						},
+						{
+							"key": "X-Amz-SignedHeaders",
+							"value": "host"
+						},
+						{
+							"key": "x-id",
+							"value": "PutObject"
+						},
+						{
+							"key": "X-Amz-Signature",
+							"value": "e389bfe5e0cf5b05f814446771a70a2a819a5c3998ab85883ad85bc2342e998c"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X PUT \"<uploadUrl>\" \\\n  -H \"Content-Type: audio/mpeg\" \\\n  --data-binary \"@ruta/al/audio.mp3\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/sessions?category=relax&tags=sueño,calma&level=beginner&page=1&pageSize=10",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer <TU_TOKEN_JWT>"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions?category=relax&tags=sueño,calma&level=beginner&page=1&pageSize=10",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "relax"
+						},
+						{
+							"key": "tags",
+							"value": "sueño,calma"
+						},
+						{
+							"key": "level",
+							"value": "beginner"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/sessions?category=relax&tags=sueño,calma&level=beginner&page=1&pageSize=10\" \\\r\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/sessions/session123/register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY2MTQ1ODMsImlhdCI6MTc1NjUyODE4Mywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.3DMQTyHJPDtrbYfKv8WY23iOUhAsBcMlxIjpetKBZ2g"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"EL exito 2\",\r\n    \"progress\": 20.0,\r\n    \"completedAudios\": [\"G53bywy6NQAKHopdtFPa\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/rZ8id6DFPyYbEFDGPmuf/register",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"register"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/sessions/session123/register\" \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"title\": \"Relajación profunda\", \"progress\": 0.0 }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/sessions/session123",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTYzNDYxNTQsImlhdCI6MTc1NjI1OTc1NCwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.kws0HUc4HD8-aQTPVBFfrENTjxU7fKumXqkzWi_Kvik"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/3GID4x88WodAtq97LtSt",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"3GID4x88WodAtq97LtSt"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/sessions/session123\" \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/sessions/{sessionId}/audios?userId={userId}",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0MjU0MzAsImlhdCI6MTc1NjMzOTAzMCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.SGA7ek1fbElFbhfuVCCDToecV2K7O3Thyos9HZd56x0"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/rZ8id6DFPyYbEFDGPmuf/audios?userId=edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"audios"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "edJpSZ76WPNHJ1rPoafv6rgYMKy2"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/sessions/{sessionId}/audios?userId={userId}\" \\\n  -H \"Authorization: Bearer <SERVER_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/sessions/session123/complete",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY0MjU0MzAsImlhdCI6MTc1NjMzOTAzMCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.SGA7ek1fbElFbhfuVCCDToecV2K7O3Thyos9HZd56x0"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/rZ8id6DFPyYbEFDGPmuf/complete",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"complete"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/sessions/session123/complete\" \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"userId\": \"abc123\" }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/admin/config/audio-activation-interval",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc3MzUwNTgsImlhdCI6MTc1NzY0ODY1OCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.Mp2dgkwVrNh7TrJ2p6EG3viwNdHuXinGJv7lcpPby-g"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"intervalDays\": 2,\r\n    \"maxActiveSessions\": 3\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/config/audio-activation-interval",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"config",
+						"audio-activation-interval"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/admin/config/audio-activation-interval\" \\\n  -H \"Authorization: Bearer <SERVER_JWT_ADMIN>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"intervalDays\": 5 }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/sessions/session123/start",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY2MTQ1ODMsImlhdCI6MTc1NjUyODE4Mywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.3DMQTyHJPDtrbYfKv8WY23iOUhAsBcMlxIjpetKBZ2g"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\n    \"deviceInfo\": {\n      \"deviceId\": \"device-123\",\n      \"platform\": \"iOS\",\n      \"osVersion\": \"17.5\"\n    },\n    \"location\": {\n      \"lat\": -34.6037,\n      \"lng\": -58.3816\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/rZ8id6DFPyYbEFDGPmuf/start",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"start"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/sessions/session123/start\" \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"userId\": \"abc123\",\n    \"deviceInfo\": {\n      \"deviceId\": \"device-123\",\n      \"platform\": \"iOS\",\n      \"osVersion\": \"17.5\"\n    },\n    \"location\": {\n      \"lat\": -34.6037,\n      \"lng\": -58.3816\n    }\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/sessions/session123/heartbeat",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY3NTk3MzAsImlhdCI6MTc1NjY3MzMzMCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.ajYPLn3p8U002l2CbYNm8Tr2ORWaqD_oTMzud0oMmHI"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\n  \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\n  \"position\": 15,\n  \"duration\": 600,\n  \"connectionType\": \"wifi\",\n  \"buffering\": false,\n  \"timestamp\": \"2025-08-30T12:34:56Z\",\n  \"deviceInfo\": {\n    \"deviceId\": \"device-123\",\n    \"platform\": \"iOS\",\n    \"osVersion\": \"17.5\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/rZ8id6DFPyYbEFDGPmuf/heartbeat",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"heartbeat"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/sessions/session123/heartbeat\" \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"audioId\": \"audio1\",\n    \"position\": 123,\n    \"duration\": 600,\n    \"connectionType\": \"wifi\",\n    \"buffering\": false,\n    \"deviceInfo\": {\n      \"deviceId\": \"device-123\",\n      \"platform\": \"iOS\",\n      \"osVersion\": \"17.5\"\n    }\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/sessions/session123/download-audio",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY4NjczODcsImlhdCI6MTc1Njc4MDk4Nywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.5-5938NUDuj7DzNOq2lurqqovi9JD-LSlBSdHjR3hRc"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n      \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n      \"deviceId\": \"device-123\",\r\n      \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n      \"type\": \"audio\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/rZ8id6DFPyYbEFDGPmuf/download",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"download"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/sessions/session123/download\" \\\r\n    -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\r\n    -H \"Content-Type: application/json\" \\\r\n    -d '{\r\n      \"userId\": \"abc123\",\r\n      \"deviceId\": \"device-123\",\r\n      \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n      \"type\": \"audio\"\r\n    }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/sessions/session123/download-imagAud",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczODcyMjYsImlhdCI6MTc1NzMwMDgyNiwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.hJrKQg-r6IvTqA1mKXz9tfB0hFvfyBc99xonFQvbJAQ"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n      \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n      \"deviceId\": \"device-123\",\r\n      \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n      \"type\": \"image\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/rZ8id6DFPyYbEFDGPmuf/download",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"rZ8id6DFPyYbEFDGPmuf",
+						"download"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/sessions/session123/download\" \\\r\n    -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\r\n    -H \"Content-Type: application/json\" \\\r\n    -d '{\r\n      \"userId\": \"abc123\",\r\n      \"deviceId\": \"device-123\",\r\n      \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n      \"type\": \"audio\"\r\n    }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/sessions/session123/download-imagCover",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer <TU_TOKEN_JWT>"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n      \"userId\": \"abc123\",\r\n      \"deviceId\": \"device-123\",\r\n      \"type\": \"audio\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/sessions/session123/download",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"sessions",
+						"session123",
+						"download"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/sessions/session123/download\" \\\r\n    -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\r\n    -H \"Content-Type: application/json\" \\\r\n    -d '{\r\n      \"userId\": \"abc123\",\r\n      \"deviceId\": \"device-123\",\r\n      \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\r\n      \"type\": \"audio\"\r\n    }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/library/search?q=relajación&category=relax&tags=sueño,calma&level=beginner&page=1&pageSize=10",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTY5NTkzMTYsImlhdCI6MTc1Njg3MjkxNiwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.NxItdQ5nm65Am4VJTVcZ1FtR9OuFAm4thqVs_uaUyXo"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/library/search?category=relax&page=1&pageSize=10",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"library",
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Relajación",
+							"disabled": true
+						},
+						{
+							"key": "category",
+							"value": "relax"
+						},
+						{
+							"key": "tags",
+							"value": "sueño,calma",
+							"disabled": true
+						},
+						{
+							"key": "level",
+							"value": "beginner",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/library/search?q=relajación&category=relax&tags=sueño,calma&level=beginner&page=1&pageSize=10\" \\\r\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/library/categories",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyNjM4MzEsImlhdCI6MTc1NzE3NzQzMSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.huZD9nwH9u3rlW9hvg8UQyRLIq1SkbGz5nZREI1arYk"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/library/categories",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"library",
+						"categories"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/library/categories\" -H \"Authorization: Bearer <TU_TOKEN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/library/categories",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyNjM4MzEsImlhdCI6MTc1NzE3NzQzMSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.huZD9nwH9u3rlW9hvg8UQyRLIq1SkbGz5nZREI1arYk"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"name\": \"relax\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/library/categories",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"library",
+						"categories"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/library/categories\" \\\r\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{ \"name\": \"relax\" }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/receipt/verify",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyNjM4MzEsImlhdCI6MTc1NzE3NzQzMSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.huZD9nwH9u3rlW9hvg8UQyRLIq1SkbGz5nZREI1arYk"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n    \"receipt\": {\r\n      \"source\": \"GooglePlay\",\r\n      \"data\": \"eyJwYWNrYWdlTmFtZSI6ImNvbS50dWFwcCIsInByb2R1Y3RJZCI6InByZW1pdW1fbW9udGgiLCJwdXJjaGFzZVRva2VuIjoidG9rZW4xMjMifQ==\"\r\n    }\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/receipt/verify",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"receipt",
+						"verify"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/receipt/verify\" \\\r\n  -H \"Authorization: Bearer <SERVER_JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"userId\": \"abc123\",\r\n    \"receipt\": {\r\n      \"source\": \"GooglePlay\",\r\n      \"data\": \"<recibo_base64>\"\r\n    }\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/events/batch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyNjM4MzEsImlhdCI6MTc1NzE3NzQzMSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.huZD9nwH9u3rlW9hvg8UQyRLIq1SkbGz5nZREI1arYk"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"events\": [\r\n    {\r\n      \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n      \"eventType\": \"play\",\r\n      \"timestamp\": \"2025-09-06T12:34:56Z\",\r\n      \"data\": {\r\n        \"sessionId\": \"rZ8id6DFPyYbEFDGPmuf\",\r\n        \"metadata\": { \"device\": \"android\", \"version\": \"1.2.3\" }\r\n      }\r\n    },\r\n    {\r\n      \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n      \"eventType\": \"play\",\r\n       \"timestamp\": \"2025-09-06T12:34:56Z\",\r\n      \"data\": {\r\n        \"sessionId\": \"rZ8id6DFPyYbEFDGPmuf\",\r\n        \"audioId\": \"CqJDS3QHrpWnmR15T9s\",\r\n        \"metadata\": { \"device\": \"android\", \"version\": \"1.2.3\" }\r\n      }\r\n    },\r\n    {\r\n      \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n      \"eventType\": \"pause\",\r\n       \"timestamp\": \"2025-09-06T12:34:56Z\",\r\n      \"data\": {\r\n        \"sessionId\": \"rZ8id6DFPyYbEFDGPmuf\",\r\n        \"audioId\": \"CqJDS3QHrpWnmR15T9s\",\r\n        \"metadata\": { \"device\": \"android\", \"version\": \"1.2.3\" }\r\n      }\r\n    }\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/events/batch",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"events",
+						"batch"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/events/batch\" \\\r\n  -H \"Authorization: Bearer <SERVER_JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"events\": [\r\n      {\r\n        \"type\": \"play\",\r\n        \"userId\": \"user123\",\r\n        \"sessionId\": \"session456\",\r\n        \"timestamp\": \"2025-09-06T12:34:56Z\",\r\n        \"metadata\": { \"device\": \"android\", \"version\": \"1.2.3\" }\r\n      },\r\n      {\r\n        \"type\": \"pause\",\r\n        \"userId\": \"user123\",\r\n        \"sessionId\": \"session456\",\r\n        \"timestamp\": \"2025-09-06T12:35:10Z\",\r\n        \"metadata\": { \"device\": \"android\", \"version\": \"1.2.3\" }\r\n      }\r\n    ]\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTcyOTcwMzQsImlhdCI6MTc1NzIxMDYzNCwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.g8rz3o2jmEnwGCidxRmb7_ayieNKUzSoZlN0zpGgg1A"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n    \"type\": \"session\",\r\n    \"title\": \"Focus on breathing\",\r\n    \"scheduledFor\": \"2025-09-06T21:00:00Z\",\r\n    \"tags\": [\r\n        \"Focus\",\r\n        \"Breathing\"\r\n    ],\r\n    \"message\": \"Recuerda tu sesión de meditación a las 21:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/alerts\" \\\r\n  -H \"Authorization: Bearer <SERVER_JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"userId\": \"abc123\",\r\n    \"message\": \"Recuerda tu sesión de meditación a las 21:00\",\r\n    \"scheduledFor\": \"2025-09-06T21:00:00Z\",\r\n    \"type\": \"reminder\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/alert123/send",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczMDAxMzEsImlhdCI6MTc1NzIxMzczMSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.PccuD430PXI6LK6xaeU3TdenIA4KgkBmcF2aepro_ZQ"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/bhPVXLVtPWF5OChMtfKp/send",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"bhPVXLVtPWF5OChMtfKp",
+						"send"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/alerts/alert123/send\" \\\r\n  -H \"Authorization: Bearer <SERVER_JWT_ADMIN>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/alert123/send?userId=abc123",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczMDAxMzEsImlhdCI6MTc1NzIxMzczMSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.PccuD430PXI6LK6xaeU3TdenIA4KgkBmcF2aepro_ZQ"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/iAE1K5Doql0K0DPeOSGi/send?userId=edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"iAE1K5Doql0K0DPeOSGi",
+						"send"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "edJpSZ76WPNHJ1rPoafv6rgYMKy2"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/alerts/alert123/send?userId=abc123\" \\\r\n  -H \"Authorization: Bearer <SERVER_JWT_ADMIN>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/reminder",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczMDAxMzEsImlhdCI6MTc1NzIxMzczMSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.PccuD430PXI6LK6xaeU3TdenIA4KgkBmcF2aepro_ZQ"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n      \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n      \"reminderTime\": \"21:00\",\r\n      \"frequency\": \"daily\",\r\n      \"activeDays\": [\"M\", \"T\", \"W\", \"T\", \"F\"]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/reminder",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"reminder"
+					]
+				},
+				"description": "Generated from cURL:  curl -X POST \"http://localhost:8080/v1/alerts/reminder\" \\\r\n    -H \"Authorization: Bearer <JWT>\" \\\r\n    -H \"Content-Type: application/json\" \\\r\n    -d '{\r\n      \"userId\": \"abc123\",\r\n      \"reminderTime\": \"21:00\",\r\n      \"frequency\": \"daily\",\r\n      \"activeDays\": [\"M\", \"T\", \"W\", \"T\", \"F\"]\r\n    }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/preferences",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczNDI4NzIsImlhdCI6MTc1NzI1NjQ3Miwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.m3BTANmEgnPFQrJjS0lVPsywrnKm8aDYZ27i7K8CYuI"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n    \"motivationalMessages\": true,\r\n    \"achievementNotifications\": true,\r\n    \"sessionReminders\": false\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/preferences",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"preferences"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH https://api.tuapp.com/v1/alerts/preferences \\\r\n  -H \"Authorization: Bearer <SERVER_JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"userId\": \"abc123\",\r\n    \"motivationalMessages\": true,\r\n    \"achievementNotifications\": true,\r\n    \"sessionReminders\": false\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/message-style",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczNDYwMDUsImlhdCI6MTc1NzI1OTYwNSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.SZtsbzuyMskJOWCR0Oi4v6SNp5f8tqCXkBDLDpHtZ5g"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\n    \"messageStyle\": \"motivational\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/message-style",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"message-style"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH https://api.tuapp.com/v1/alerts/message-style \\\n  -H \"Authorization: Bearer <SERVER_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"userId\": \"abc123\",\n    \"messageStyle\": \"motivational\"\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/preview?userId=abc123-lang",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczNDYwMDUsImlhdCI6MTc1NzI1OTYwNSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.SZtsbzuyMskJOWCR0Oi4v6SNp5f8tqCXkBDLDpHtZ5g"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "es"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/preview?userId=edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"preview"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "edJpSZ76WPNHJ1rPoafv6rgYMKy2"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/v1/alerts/preview?userId=abc123\" \\\n  -H \"Authorization: Bearer <SERVER_JWT>\" \\\n  -H \"Accept-Language: en\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/upcoming?userId=user123",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczNDYwMDUsImlhdCI6MTc1NzI1OTYwNSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.SZtsbzuyMskJOWCR0Oi4v6SNp5f8tqCXkBDLDpHtZ5g"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/upcoming?userId=edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"upcoming"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "edJpSZ76WPNHJ1rPoafv6rgYMKy2"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"https://api.tuapp.com/v1/alerts/upcoming?userId=user123\" \\\n  -H \"Authorization: Bearer <server JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/config",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczNDYwMDUsImlhdCI6MTc1NzI1OTYwNSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.SZtsbzuyMskJOWCR0Oi4v6SNp5f8tqCXkBDLDpHtZ5g"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\r\n    \"reminderTime\": \"21:00\",\r\n    \"frequency\": \"daily\",\r\n    \"activeDays\": [\"M\", \"T\", \"W\", \"T\", \"F\"],\r\n    \"motivationalMessages\": true,\r\n    \"achievementNotifications\": true,\r\n    \"sessionReminders\": false,\r\n    \"messageStyle\": \"gentle\",\r\n    \"smartSnooze\": true,\r\n    \"doNotDisturbRespect\": true\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/config",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"config"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH https://api.tuapp.com/v1/alerts/config \\\r\n  -H \"Authorization: Bearer <server JWT>\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"userId\": \"abc123\",\r\n    \"reminderTime\": \"21:00\",\r\n    \"frequency\": \"daily\",\r\n    \"activeDays\": [\"M\", \"T\", \"W\", \"T\", \"F\"],\r\n    \"motivationalMessages\": true,\r\n    \"achievementNotifications\": true,\r\n    \"sessionReminders\": false,\r\n    \"messageStyle\": \"gentle\",\r\n    \"smartSnooze\": true,\r\n    \"doNotDisturbRespect\": true\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/config?userId=abc123",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczNDYwMDUsImlhdCI6MTc1NzI1OTYwNSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.SZtsbzuyMskJOWCR0Oi4v6SNp5f8tqCXkBDLDpHtZ5g"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/config?userId=edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"config"
+					],
+					"query": [
+						{
+							"key": "userId",
+							"value": "edJpSZ76WPNHJ1rPoafv6rgYMKy2"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"https://api.tuapp.com/v1/alerts/config?userId=abc123\" \\\n  -H \"Authorization: Bearer <server JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/alerts/advanced-options",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczNDYwMDUsImlhdCI6MTc1NzI1OTYwNSwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.SZtsbzuyMskJOWCR0Oi4v6SNp5f8tqCXkBDLDpHtZ5g"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\n  \"smartSnooze\": true,\n  \"doNotDisturbRespect\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/alerts/advanced-options",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"alerts",
+						"advanced-options"
+					]
+				},
+				"description": "Generated from cURL: curl --location --request PATCH 'http://localhost:8080/v1/alerts/advanced-options' \\\n--header 'Authorization: Bearer <SERVER_JWT>' \\\n--header 'Content-Type: application/json' \\\n--data '{\n  \"userId\": \"abc123\",\n  \"smartSnooze\": true,\n  \"doNotDisturbRespect\": true\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile-image-url",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczODEyNjQsImlhdCI6MTc1NzI5NDg2NCwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.UwB723NMd4pQQ5Rq5VPzVtY1sC7Er2jcDZ-DqQPFNT4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"imageUrl\": \"https://clin.728ebab08a84d61b80c5478ab05b4168.r2.cloudflarestorage.com/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile.jpg\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}0/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile-image-url",
+					"host": [
+						"{{baseURL}}0"
+					],
+					"path": [
+						"v1",
+						"users",
+						"ZooCaNaIkQQR4FVG5Ywyb81F9ww1",
+						"profile-image-url"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH \"http://localhost:8080/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile-image-url\" \\\n  -H \"Authorization: Bearer <JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"imageUrl\": \"https://r2.example.com/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile.jpg\"}'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile-image?contentType=image/jpeg",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTczODEyNjQsImlhdCI6MTc1NzI5NDg2NCwicm9sZSI6InVzZXIiLCJ1aWQiOiJab29DYU5hSWtRUVI0RlZHNVl3eWI4MUY5d3cxIn0.UwB723NMd4pQQ5Rq5VPzVtY1sC7Er2jcDZ-DqQPFNT4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile-image?contentType=image/jpeg",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"ZooCaNaIkQQR4FVG5Ywyb81F9ww1",
+						"profile-image"
+					],
+					"query": [
+						{
+							"key": "contentType",
+							"value": "image/jpeg"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/profile-image?contentType=image/jpeg\" \\\n  -H \"Authorization: Bearer <JWT>\" \\\n  -H \"Content-Type: application/json\""
+			},
+			"response": []
+		},
+		{
+			"name": "v1/auth/forgot-password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"email\": \"fausto.laminia@gmail.com\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/auth/forgot-password",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"auth",
+						"forgot-password"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/auth/forgot-password\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"email\": \"usuario@email.com\" }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/auth/resend-code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"email\": \"fausto.laminia@gmail.com\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/auth/resend-code",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"auth",
+						"resend-code"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/v1/auth/resend-code\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"email\": \"usuario@email.com\" }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/auth/verify-code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\":\"fausto.laminia@gmail.com\",\"code\":\"293302\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/auth/verify-code",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"auth",
+						"verify-code"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST https://tu-api.com/v1/auth/verify-code \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\"email\":\"user@email.com\",\"code\":\"123456\"}'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/auth/social-login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"provider\": \"google\",\n    \"token\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6IjljNjI1MTU4Nzk1MDg0NGE2NTZiZTM1NjNkOGM1YmQ2Zjg5NGM0MDciLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDQ2NDM5OTY2OTg2Nzc4MTAyNDQiLCJoZCI6ImhpcG5vYXBwLmNvbSIsImVtYWlsIjoiYWRtaW5AaGlwbm9hcHAuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF0X2hhc2giOiJlVDNkeml3REU3MVNGbzBoTEQ4Zm1BIiwibmFtZSI6ImVkd2luIGphdmllciBMYW1pw7FhIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0oxRnJsV195SWx3ZW9yNGVMX05aWk53aDhQU09taHlyUm9DYW1QaVNjS3hPRnVVQT1zOTYtYyIsImdpdmVuX25hbWUiOiJlZHdpbiBqYXZpZXIiLCJmYW1pbHlfbmFtZSI6IkxhbWnDsWEiLCJpYXQiOjE3NTc1NTgzNjEsImV4cCI6MTc1NzU2MTk2MX0.VUjTknenPmBt65kqQDJ96nEQaJTsV64YBWdvJHspjy1xXH_zfShkigJ9F7R5_wVeFmpoUbmryQGStVzXXkYz7HpR6nT1wuBnK70KbU2Yq0ffAKxIy3bGLmGozeLFB62grjkDoWx4OW6RoEvqNrUf0l-dXmH3u_eK__0RRdRUgv1hdK1-l6wGWpVBBD7epCM7c8CF77GKAhnFQytseU5PsSeyLUeU8GJ1WaVJ298qqXxJagKD62bGcM5m2mhWlYg_o5Sh4VeycCVVPhyWiQA4vuFOyvSwhhuR4EPVnla1E52yY1j3tlksUzDR_qwNGFTAHh8EBYi5eGeipgZB5haRJQ\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/auth/social-login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"auth",
+						"social-login"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST https://your-domain.up.railway.app/v1/auth/social-login \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"provider\": \"google\",\n    \"token\": \"eyJhbGciOiJSUzI1NiIsImtpZCI6Ij...\"\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "v1/config/audio-activation-interval",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc4MTY5MjUsImlhdCI6MTc1NzczMDUyNSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.ctm6DgNNz2k56gdXCdBjGGAZ-3csD4ksuNHPKD0q_xE"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/config/audio-activation-interval",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"config",
+						"audio-activation-interval"
+					]
+				},
+				"description": "Generated from cURL: curl.exe -X GET \"http://localhost:8080/v1/config/audio-activation-interval\" -H \"Authorization: Bearer <JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/admin/config/audio-activation-interval/cache-stats",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc4MTY5MjUsImlhdCI6MTc1NzczMDUyNSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.ctm6DgNNz2k56gdXCdBjGGAZ-3csD4ksuNHPKD0q_xE"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/config/audio-activation-interval/cache-stats",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"config",
+						"audio-activation-interval",
+						"cache-stats"
+					]
+				},
+				"description": "Generated from cURL: curl.exe -X GET \"http://localhost:8080/v1/admin/config/audio-activation-interval/cache-stats\" -H \"Authorization: Bearer <ADMIN_JWT>\""
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/USER_ID/subscription/verify-mock",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc4ODgzNDQsImlhdCI6MTc1NzgwMTk0NCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.kDCn9Fy_iKBEBWKEn23iBmk9dzgAI8rxWpac3CUtPj4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"provider\": \"mock\",\r\n    \"productId\": \"premium_monthly\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/subscription/verify",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"ZooCaNaIkQQR4FVG5Ywyb81F9ww1",
+						"subscription",
+						"verify"
+					]
+				},
+				"description": "Generated from cURL: curl.exe -X POST \"http://localhost:8080/v1/users/USER_ID/subscription/verify\" `\r\n  -H \"Authorization: Bearer YOUR_JWT\" `\r\n  -H \"Content-Type: application/json\" `\r\n  --data-raw \"{\\\"provider\\\":\\\"mock\\\",\\\"productId\\\":\\\"premium_monthly\\\"}\""
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/USER_ID/subscription/verify-google",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc4ODgzNDQsImlhdCI6MTc1NzgwMTk0NCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.kDCn9Fy_iKBEBWKEn23iBmk9dzgAI8rxWpac3CUtPj4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"provider\": \"google\",\r\n    \"packageName\": \"com.yourapp.android\",\r\n    \"productId\": \"premium_monthly\",\r\n    \"purchaseToken\": \"GOOGLE_PURCHASE_TOKEN\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/users/USER_ID/subscription/verify",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"USER_ID",
+						"subscription",
+						"verify"
+					]
+				},
+				"description": "Generated from cURL: curl.exe -X POST \"https://api.your-domain.com/v1/users/USER_ID/subscription/verify\" `\r\n\t-H \"Authorization: Bearer YOUR_JWT\" `\r\n\t-H \"Content-Type: application/json\" `\r\n\t--data-raw \"{\\\"provider\\\":\\\"google\\\",\\\"packageName\\\":\\\"com.yourapp.android\\\",\\\"productId\\\":\\\"premium_monthly\\\",\\\"purchaseToken\\\":\\\"GOOGLE_PURCHASE_TOKEN\\\"}\""
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/USER_ID/subscription/verify-apple",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer YOUR_JWT"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"provider\":\"apple\",\"receiptData\":\"APPLE_RECEIPT_BASE64\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/users/USER_ID/subscription/verify",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"USER_ID",
+						"subscription",
+						"verify"
+					]
+				},
+				"description": "Generated from cURL: curl.exe -X POST \"https://api.your-domain.com/v1/users/USER_ID/subscription/verify\" `\r\n\t-H \"Authorization: Bearer YOUR_JWT\" `\r\n\t-H \"Content-Type: application/json\" `\r\n\t--data-raw \"{\\\"provider\\\":\\\"apple\\\",\\\"receiptData\\\":\\\"APPLE_RECEIPT_BASE64\\\"}\""
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/USER_ID/subscription",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTc5OTQyNzcsImlhdCI6MTc1NzkwNzg3Nywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.UTah2C0YdJBPx3PDi9nNHzwmLKAAGtM29zGD0S_NtM8"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/ZooCaNaIkQQR4FVG5Ywyb81F9ww1/subscription",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"ZooCaNaIkQQR4FVG5Ywyb81F9ww1",
+						"subscription"
+					]
+				},
+				"description": "Generated from cURL: curl.exe -X GET \"https://api.your-domain.com/v1/users/USER_ID/subscription\" `\r\n  -H \"Authorization: Bearer YOUR_JWT\""
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/{userId}/device/register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTgyNjA1ODQsImlhdCI6MTc1ODE3NDE4NCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.PWNCl_Ipkrv-ed42_PQmxlBm-hr0r-wky_PkFC87W0U"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"deviceId\": \"device-123\",\n    \"platform\": \"android\",\n    \"osVersion\": \"13.0\",\n    \"fcmToken\": \"eDD0Q_1DQxurXZ8ms90siV:APA91bFzuZhvT2cfLVLOhmou7-e_GrnSxnnq42s3axTP4HP67xdsaNzmXD-BQTHZSon87Yj9mCXZKtiiN_nOJSg_ADsGH3mUF9yW0c3hO-mlcKKejAHrvso\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/device/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"device",
+						"register"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST http://localhost:8080/v1/users/{userId}/device/register \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"deviceId\": \"device-123\",\n    \"platform\": \"android\",\n    \"osVersion\": \"13.0\",\n    \"fcmToken\": \"<FCM_TOKEN_DEL_DISPOSITIVO>\"\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/sessions/{sessionId}/start",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTgyNjA1ODQsImlhdCI6MTc1ODE3NDE4NCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.PWNCl_Ipkrv-ed42_PQmxlBm-hr0r-wky_PkFC87W0U"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\n    \"deviceInfo\": {\n      \"deviceId\": \"device-123\",\n      \"platform\": \"android\",\n      \"osVersion\": \"13.0\"\n    },\n    \"location\": {\n      \"lat\": -34.6037,\n      \"lng\": -58.3816\n    }\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/sessions/YWZuEKsHU5ONt0gMSGLu/start",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"sessions",
+						"YWZuEKsHU5ONt0gMSGLu",
+						"start"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST http://localhost:8080/v1/sessions/{sessionId}/start \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"userId\": \"user123\",\n    \"deviceInfo\": {\n      \"deviceId\": \"device-123\",\n      \"platform\": \"android\",\n      \"osVersion\": \"13.0\"\n    },\n    \"location\": {\n      \"lat\": -34.6037,\n      \"lng\": -58.3816\n    }\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/events/batch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTgyNjA1ODQsImlhdCI6MTc1ODE3NDE4NCwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.PWNCl_Ipkrv-ed42_PQmxlBm-hr0r-wky_PkFC87W0U"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"events\": [\n      {\n        \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\n        \"eventType\": \"play\",\n        \"timestamp\": \"2025-09-17T12:00:00Z\",\n        \"data\": {\n          \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\n          \"position\": 0\n        }\n      },\n      {\n        \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\n        \"eventType\": \"milestone\",\n        \"timestamp\": \"2025-09-17T12:05:00Z\",\n        \"data\": {\n          \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\n          \"position\": 120,\n          \"progress\": 20\n        }\n      },\n      {\n        \"userId\": \"edJpSZ76WPNHJ1rPoafv6rgYMKy2\",\n        \"eventType\": \"stop\",\n        \"timestamp\": \"2025-09-17T12:10:00Z\",\n        \"data\": {\n          \"audioId\": \"CqJDS3QHrpWnmR15T9sv\",\n          \"position\": 300\n        }\n      }\n    ]\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/events/batch",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"events",
+						"batch"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST http://localhost:8080/v1/events/batch \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"events\": [\n      {\n        \"userId\": \"user123\",\n        \"eventType\": \"milestone\",\n        \"timestamp\": \"2025-09-17T12:00:00Z\",\n        \"data\": { \"progress\": 50 }\n      }\n    ]\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/sessions/{sessionId}/complete",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer <TU_TOKEN_JWT>"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"userId\": \"user123\" }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/v1/sessions/{sessionId}/complete",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"sessions",
+						"{sessionId}",
+						"complete"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST http://localhost:8080/v1/sessions/{sessionId}/complete \\\n  -H \"Authorization: Bearer <TU_TOKEN_JWT>\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{ \"userId\": \"user123\" }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/USER_ID/change-password",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTg0ODc4MTcsImlhdCI6MTc1ODQwMTQxNywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.o8FCfc6t0EURbnoLU6a2PmRdnfbClTisyOPPr0XHZxw"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"oldPassword\": \"LukasBuba.25\",\r\n    \"newPassword\": \"PruebaApp.25\",\r\n    \"confirmPassword\": \"PruebaApp.25\"\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/change-password",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"change-password"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"https://api.yourdomain.com/v1/users/USER_ID/change-password\" \\\r\n  -H \"Authorization: Bearer YOUR_JWT_TOKEN\" \\\r\n  -H \"Content-Type: application/json\" \\\r\n  -d '{\r\n    \"oldPassword\": \"myOldPassword\",\r\n    \"newPassword\": \"myNewSecurePassword\",\r\n    \"confirmPassword\": \"myNewSecurePassword\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/USER_ID/deactivate",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTg0ODc4MTcsImlhdCI6MTc1ODQwMTQxNywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.o8FCfc6t0EURbnoLU6a2PmRdnfbClTisyOPPr0XHZxw"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/deactivate",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"deactivate"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH \"https://api.yourdomain.com/v1/users/USER_ID/deactivate\" \\\r\n  -H \"Authorization: Bearer YOUR_JWT_TOKEN\" \\\r\n  -H \"Content-Type: application/json\""
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/users/USER_ID/reactivate",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTg0ODc4MTcsImlhdCI6MTc1ODQwMTQxNywicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.o8FCfc6t0EURbnoLU6a2PmRdnfbClTisyOPPr0XHZxw"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseURL}}/v1/users/edJpSZ76WPNHJ1rPoafv6rgYMKy2/reactivate",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"edJpSZ76WPNHJ1rPoafv6rgYMKy2",
+						"reactivate"
+					]
+				},
+				"description": "Generated from cURL: curl -X PATCH \"https://api.yourdomain.com/v1/users/USER_ID/reactivate\" \\\r\n  -H \"Authorization: Bearer YOUR_JWT_TOKEN\" \\\r\n  -H \"Content-Type: application/json\""
+			},
+			"response": []
+		},
+		{
+			"name": "/v1/admin/sessions",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTk0NjY0NTUsImlhdCI6MTc1OTM4MDA1NSwicm9sZSI6ImFkbWluIiwidWlkIjoiZWRKcFNaNzZXUE5ISjFyUG9hZnY2cmdZTUt5MiJ9.OF0XLzh0iBvBmCQFb6-RrH00lONfn-6tA6tbQCgRiIA"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "category",
+							"value": "relax",
+							"type": "text"
+						},
+						{
+							"key": "tags",
+							"value": "sueño,calma",
+							"type": "text"
+						},
+						{
+							"key": "level",
+							"value": "beginner",
+							"type": "text"
+						},
+						{
+							"key": "isPro",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "freeToday",
+							"value": "false",
+							"type": "text"
+						},
+						{
+							"key": "limit",
+							"value": "50",
+							"type": "text"
+						},
+						{
+							"key": "pageToken",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseURL}}/v1/admin/sessions?tags=relax&limit=50&pageToken=",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"v1",
+						"admin",
+						"sessions"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "relax",
+							"disabled": true
+						},
+						{
+							"key": "tags",
+							"value": "relax"
+						},
+						{
+							"key": "level",
+							"value": "beginner",
+							"disabled": true
+						},
+						{
+							"key": "isPro",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "freeToday",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "50"
+						},
+						{
+							"key": "pageToken",
+							"value": ""
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -sS -G \"http://localhost:8080/v1/admin/sessions\" \\\n  -H \"Authorization: Bearer <ADMIN_TOKEN>\" \\\n  -H \"Accept: application/json\" \\\n  --data-urlencode \"category=relax\" \\\n  --data-urlencode \"tags=sueño,calma\" \\\n  --data-urlencode \"level=beginner\" \\\n  --data-urlencode \"isPro=true\" \\\n  --data-urlencode \"freeToday=false\" \\\n  --data-urlencode \"limit=50\" \\\n  --data-urlencode \"pageToken=\""
+			},
+			"response": []
+		},
+		{
+			"name": "firebase/auth/signInWithPassword",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"fausto.laminia@gmail.com\",\r\n  \"password\": \"PruebaApp.25\",\r\n  \"returnSecureToken\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAM6gZzhjBe10Xvrl3pdkBtxAdPa8Ce_2E",
+					"protocol": "https",
+					"host": [
+						"identitytoolkit",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"v1",
+						"accounts:signInWithPassword"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "AIzaSyAM6gZzhjBe10Xvrl3pdkBtxAdPa8Ce_2E"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "firebase/auth/signUp",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"faus_tito29@hotmail.com\",\r\n    \"password\": \"PepitaBuba.2025\",\r\n    \"returnSecureToken\": true\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAM6gZzhjBe10Xvrl3pdkBtxAdPa8Ce_2E",
+					"protocol": "https",
+					"host": [
+						"identitytoolkit",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"v1",
+						"accounts:signUp"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "AIzaSyAM6gZzhjBe10Xvrl3pdkBtxAdPa8Ce_2E"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X POST 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=API_KEY' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -d '{\r\n    \"email\": \"fausto.laminia@gmail.com\",\r\n    \"password\": \"unaContraseñaSegura123\",\r\n    \"returnSecureToken\": true\r\n  }'"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8080",
+			"type": "default"
+		}
+	]
+}
