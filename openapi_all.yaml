@@ -3255,191 +3255,190 @@ paths:
             curl -X POST "http://localhost:8080/v1/auth/resend-code" \
               -H "Content-Type: application/json" \
               -d '{ "email": "usuario@email.com" }'
-/firebase/auth/signInWithPassword:
-  post:
-    summary: Authenticate with email and password (Firebase Auth)
-    description: |
-      Authenticates a user using email and password via the Firebase Authentication REST API.
-      This endpoint corresponds to the `accounts:signInWithPassword` operation in Firebase.
-      Returns a Firebase ID token (`idToken`), a refresh token (`refreshToken`), and authenticated user data.
-      **Note:** This endpoint is external to your backend and requires the Firebase API Key.
-    tags:
-      - Firebase Auth
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - email
-              - password
-              - returnSecureToken
-            properties:
-              email:
-                type: string
-                format: email
-                description: User's email registered in Firebase.
-                example: fausto.laminia@gmail.com
-              password:
-                type: string
-                format: password
-                description: User's password.
-                example: PruebaApp.25
-              returnSecureToken:
-                type: boolean
-                description: If `true`, Firebase returns a session token and refresh token.
-                example: true
-    responses:
-      '200':
-        description: User authenticated successfully. Returns tokens and user data.
+  /external/firebase/auth/signInWithPassword:
+    post:
+      summary: Authenticate with email and password (Firebase Auth)
+      description: |
+        Authenticates a user using email and password via the Firebase Authentication REST API.
+        This endpoint corresponds to the `accounts:signInWithPassword` operation in Firebase.
+        Returns a Firebase ID token (`idToken`), a refresh token (`refreshToken`), and authenticated user data.
+        **Note:** This endpoint is external to your backend and requires the Firebase API Key.
+      tags:
+        - Firebase Auth
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - email
+                - password
+                - returnSecureToken
               properties:
-                kind:
-                  type: string
-                  example: identitytoolkit#VerifyPasswordResponse
-                localId:
-                  type: string
-                  description: User UID in Firebase.
                 email:
                   type: string
-                displayName:
+                  format: email
+                  description: User's email registered in Firebase.
+                  example: fausto.laminia@gmail.com
+                password:
                   type: string
-                idToken:
-                  type: string
-                  description: Firebase session JWT token.
-                registered:
+                  format: password
+                  description: User's password.
+                  example: PruebaApp.25
+                returnSecureToken:
                   type: boolean
-                refreshToken:
-                  type: string
-                  description: Firebase refresh token.
-                expiresIn:
-                  type: string
-                  description: Token expiration time in seconds.
-      '400':
-        description: Authentication error (invalid credentials or user does not exist).
+                  description: If `true`, Firebase returns a session token and refresh token.
+                  example: true
+      responses:
+        '200':
+          description: User authenticated successfully. Returns tokens and user data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  kind:
+                    type: string
+                    example: identitytoolkit#VerifyPasswordResponse
+                  localId:
+                    type: string
+                    description: User UID in Firebase.
+                  email:
+                    type: string
+                  displayName:
+                    type: string
+                  idToken:
+                    type: string
+                    description: Firebase session JWT token.
+                  registered:
+                    type: boolean
+                  refreshToken:
+                    type: string
+                    description: Firebase refresh token.
+                  expiresIn:
+                    type: string
+                    description: Token expiration time in seconds.
+        '400':
+          description: Authentication error (invalid credentials or user does not exist).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: EMAIL_NOT_FOUND
+                      errors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            message:
+                              type: string
+                            domain:
+                              type: string
+                            reason:
+                              type: string
+      externalDocs:
+        description: Official Firebase Auth REST API documentation
+        url: https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
+  /external/firebase/auth/signUp:
+    post:
+      summary: Register a new user with email and password (Firebase Auth)
+      description: |
+        Registers a new user using email and password via the Firebase Authentication REST API.
+        This endpoint corresponds to the `accounts:signUp` operation in Firebase.
+        Returns a Firebase ID token (`idToken`), a refresh token (`refreshToken`), and the new user's data.
+        **Note:** This endpoint is external to your backend and requires the Firebase API Key.
+      tags:
+        - Firebase Auth
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - email
+                - password
+                - returnSecureToken
               properties:
-                error:
-                  type: object
-                  properties:
-                    code:
-                      type: integer
-                      example: 400
-                    message:
-                      type: string
-                      example: EMAIL_NOT_FOUND
-                    errors:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          message:
-                            type: string
-                          domain:
-                            type: string
-                          reason:
-                            type: string
-    externalDocs:
-      description: Official Firebase Auth REST API documentation
-      url: https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
-
-/firebase/auth/signUp:
-  post:
-    summary: Register a new user with email and password (Firebase Auth)
-    description: |
-      Registers a new user using email and password via the Firebase Authentication REST API.
-      This endpoint corresponds to the `accounts:signUp` operation in Firebase.
-      Returns a Firebase ID token (`idToken`), a refresh token (`refreshToken`), and the new user's data.
-      **Note:** This endpoint is external to your backend and requires the Firebase API Key.
-    tags:
-      - Firebase Auth
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            required:
-              - email
-              - password
-              - returnSecureToken
-            properties:
-              email:
-                type: string
-                format: email
-                description: Email to register in Firebase.
-                example: newuser@email.com
-              password:
-                type: string
-                format: password
-                description: Password for the new user.
-                example: MySecurePassword123
-              returnSecureToken:
-                type: boolean
-                description: If `true`, Firebase returns a session token and refresh token.
-                example: true
-    responses:
-      '200':
-        description: User registered successfully. Returns tokens and user data.
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                kind:
-                  type: string
-                  example: identitytoolkit#SignupNewUserResponse
-                idToken:
-                  type: string
-                  description: Firebase session JWT token.
                 email:
                   type: string
-                refreshToken:
+                  format: email
+                  description: Email to register in Firebase.
+                  example: newuser@email.com
+                password:
                   type: string
-                  description: Firebase refresh token.
-                expiresIn:
-                  type: string
-                  description: Token expiration time in seconds.
-                localId:
-                  type: string
-                  description: User UID in Firebase.
-      '400':
-        description: Registration error (email already exists, weak password, etc.).
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                error:
-                  type: object
-                  properties:
-                    code:
-                      type: integer
-                      example: 400
-                    message:
-                      type: string
-                      example: EMAIL_EXISTS
-                    errors:
-                      type: array
-                      items:
-                        type: object
-                        properties:
-                          message:
-                            type: string
-                          domain:
-                            type: string
-                          reason:
-                            type: string
-    externalDocs:
-      description: Official Firebase Auth REST API documentation
-      url: https://firebase.google.com/docs/reference/rest/auth#section-sign-up              
+                  format: password
+                  description: Password for the new user.
+                  example: MySecurePassword123
+                returnSecureToken:
+                  type: boolean
+                  description: If `true`, Firebase returns a session token and refresh token.
+                  example: true
+      responses:
+        '200':
+          description: User registered successfully. Returns tokens and user data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  kind:
+                    type: string
+                    example: identitytoolkit#SignupNewUserResponse
+                  idToken:
+                    type: string
+                    description: Firebase session JWT token.
+                  email:
+                    type: string
+                  refreshToken:
+                    type: string
+                    description: Firebase refresh token.
+                  expiresIn:
+                    type: string
+                    description: Token expiration time in seconds.
+                  localId:
+                    type: string
+                    description: User UID in Firebase.
+        '400':
+          description: Registration error (email already exists, weak password, etc.).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: integer
+                        example: 400
+                      message:
+                        type: string
+                        example: EMAIL_EXISTS
+                      errors:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            message:
+                              type: string
+                            domain:
+                              type: string
+                            reason:
+                              type: string
+      externalDocs:
+        description: Official Firebase Auth REST API documentation
+        url: https://firebase.google.com/docs/reference/rest/auth#section-sign-up              
 components:
   securitySchemes:
     bearerAuth:
